@@ -1,25 +1,4 @@
-## FASTQ_ID -- The prefix for the fastq files uploaded to the LANL server,,,,,,,,,,,,,,,,,,,,,
-## STUDY_ID -- The ID for each patient in the clinical database,,,,,,,,,,,,,,,,,,,,,
-## SEQUENCING_BATCH -- The batch in which the fastq file was sequenced,,,,,,,,,,,,,,,,,,,,,
-## ARDS -- presence of ARDS -- 1 = yes, 0 = no,,,,,,,,,,,,,,,,,,,,
-## SEVERITY -- if patient has ARDS, ranking of ARDS severity. 0 = no ARDS, 1 = mild ARDS, 2 = moderate ARDS, 3 = severe ARDS,,,,,,,,,,,,,,,,,
-## PF -- A measurement of the PaO2/FiO2 ratio on the date of the blood draw,,,,,,,,,,,,,,,,,,,,,
-## INHOSP -- patient died during the hospitalization. 1 = yes, 0 = no,,,,,,,,,,,,,,,,,,,,
-## MONTH -- patient died within one month of consent. 1 = yes, 0 = no,,,,,,,,,,,,,,,,,,,,
-## YEAR -- patient died within one year of consent. 1 = yes, 0 = no,,,,,,,,,,,,,,,,,,,,
-## DEATH -- number of days patient went without dying from the date of consent. Ranges from 0-365.,,,,,,,,,,,,,,,,,,,,,
-## ICU -- ICU free days. Number of days out of 28 total in which the patient was not in the ICU.,,,,,,,,,,,,,,,,,,,,,
-## VENT -- ventilator free days. Number of days out of 28 total in which the patient was not receiving mechanical ventilation.,,,,,,,,,,,,,,,,,,,,,
-## GENDER = male = 1, female = 0,,,,,,,,,,,,,,,,,,,,
-## RACE = 0 = white, 1 = black, 2 = hispanic, 3 = other,,,,,,,,,,,,,,,,,,
-## AGE = numerical age in years,,,,,,,,,,,,,,,,,,,,,
-## MALIGNANCY = current diagnosis of cancer,,,,,,,,,,,,,,,,,,,,,
-## DIABETES = current diagnosis of diabetes,,,,,,,,,,,,,,,,,,,,,
-## IMMUNOSUPPRESSED = current suppression of immune response due to either medication or medical condition,,,,,,,,,,,,,,,,,,,,,
-## COPD = current diagnosis of chronic obstructive pulmonary disease,,,,,,,,,,,,,,,,,,,,,
-## ALCOHOL = current history of alcohol abuse,,,,,,,,,,,,,,,,,,,,,
-## ENTEROTYPYE = microbiome entertotype. 0 = minimal dysbiosis,1 = metabolic dysbiosis,2 = pathogen dysbiosis,,,,,,,,,,,,,,,,,,,
-,FASTQ_ID,STUDY_ID,SEQUENCING_BATCH,ARDS,SEVERITY,PF,INHOSP,MONTH,YEAR,DEATH,ICU,VENT,AGE,GENDER,RACE,MALIGNANCY,DIABETES,IMMUNOSUPPRESSED,COPD,ALCOHOL,ENTEROTYPE
+FASTQ_ID,STUDY_ID,SEQUENCING_BATCH,ARDS,SEVERITY,PF,INHOSP,MONTH,YEAR,DEATH,ICU,VENT,AGE,GENDER,RACE,MALIGNANCY,DIABETES,IMMUNOSUPPRESSED,COPD,ALCOHOL,ENTEROTYPE
 1,PAX_1_6,1,1,0,0,NA,0,0,0,365,25,28,64.81,0,0,0,0,0,0,0,NA
 3,PAX_3_15,3,1,0,0,NA,0,0,0,365,24,28,74.99,0,0,1,1,0,0,0,NA
 4,PAX_4_18,4,1,1,3,77,0,0,0,365,22,28,55.89,0,0,1,0,1,0,0,NA
