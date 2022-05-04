@@ -5,23 +5,20 @@ from qiime2 import Artifact
 from qiime2.plugins import feature_table as ft
 from qiime2.plugins import taxa
 # %%
-asv = Artifact.load('./icu-biome/qiime/table_stool.qza')
-tax = Artifact.load('./icu-biome/qiime/tax_curated.qza')
+asv = Artifact.load('../qiime/table_stool.qza')
+tax = Artifact.load('../qiime/tax_curated.qza')
 # %%
 #filt_asv = pd.read_csv('./icu-biome/feature_tables/59N_ASV_rare6k_filt002p7.csv',index_col=0).columns.to_list()
-meta = pd.read_csv('./icu-biome/meta/59N_alpha.csv',index_col=0)
+meta = pd.read_csv('../meta/59N_alpha.csv',index_col=0)
 # %%
 ftable = ft.actions.filter_features_conditionally(asv,.00002,.01).filtered_table
-ftable = ft.actions.filter_samples(ftable,5000).filtered_table
+ftable = ft.actions.filter_samples(ftable,1000).filtered_table
 # %%
 biggenus = taxa.actions.collapse(ftable,tax,7).collapsed_table.view(pd.DataFrame)
-biggenus.to_csv('./icu-biome/feature_tables/59N_genus.csv')
+biggenus.to_csv('../feature_tables/59N_genus.csv')
 ftable = taxa.actions.collapse(ftable,tax,7).collapsed_table
 biggenus.shape
 
-# %%
-genus = ft.actions.filter_features_conditionally(ftable,0.000000000001,.2).filtered_table.view(pd.DataFrame)
-genus = genus.loc[genus.sum(axis=1)>1000]
 
 # %%
 def parseTaxonomy(table,thres=60):
@@ -50,18 +47,23 @@ def parseTaxonomy(table,thres=60):
 
 # %%
 x=parseTaxonomy(genus,thres=70)
-x.to_csv('./icu-biome/feature_tables/59N_genus_t70.csv')
 # %%
-x.loc[meta['Day']==1].to_csv('./icu-biome/feature_tables/52N_genus_t70.csv')
+x.to_csv('../feature_tables/59N_genus_t70.csv')
+# %%
+x=x.loc[meta['Day']==1]
+x=x.loc[x.sum(axis=1)>100]
+x.to_csv('../feature_tables/51N_genus_t70.csv')
 
 # %%
 from skbio.stats.composition import multiplicative_replacement
 # %%
 x[:]=multiplicative_replacement(x)
-x.loc[meta['Day']==1].to_csv('./icu-biome/feature_tables/52N_genus_t70_nozero.csv')
-x[:]=np.log(x)
-x.to_csv('./icu-biome/feature_tables/59N_genus_t70_log.csv')
+x.to_csv('../feature_tables/51N_genus_t70_nozero.csv')
 # %%
-meta.loc[meta['Day']==1,['APACHE','Age']].to_csv('./icu-biome/selbal/covariates.csv')
-meta.loc[meta['Day']==1,'month'].astype(int).to_csv('./icu-biome/selbal/target.csv')
+meta=meta.loc[x.index]
+meta.loc[meta['Day']==1,['APACHE','Age']].to_csv('../selbal/covariates.csv')
+meta.loc[meta['Day']==1,'month'].astype(int).to_csv('../selbal/target.csv')
+# %%
+meta.to_csv('../meta/51N_alpha.csv')
+
 # %%

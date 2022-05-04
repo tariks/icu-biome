@@ -1,4 +1,4 @@
-SampleID,month
+,month
 195S1,1
 197S1,1
 198S1,1
@@ -38,7 +38,6 @@ SampleID,month
 133S1,1
 136S1,0
 138S1,0
-139S1,1
 144S1,1
 147S1,0
 150S1,1
