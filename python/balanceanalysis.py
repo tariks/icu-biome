@@ -5,16 +5,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import ticker
-from scipy import stats
 from skbio.stats.composition import multiplicative_replacement, clr, ilr
 from sklearn.decomposition import PCA
 import cmasher as cmr
+from pca import pca
 
 # %%
 meta = pd.read_csv("../meta/52_bal.csv", index_col=0)
+table = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
 # %%
-#table = pd.read_csv("../feature_tables/52N_genus_t80_full.csv", index_col=0)
-table = pd.read_csv("../feature_tables/52_phylum80.csv", index_col=0)
+#table = pd.read_csv("../feature_tables/52_phylum80.csv", index_col=0)
 s = table.sum() / table.sum().sum()
 s = s.sort_values()[::-1]
 s1 = (table > 0).sum().sort_values()[::-1]
@@ -24,6 +24,53 @@ table = table.loc[:, table.columns.isin(c)]
 table.shape
 # %%
 plt.style.use("../lance.txt")
+# %%
+x=table.copy()
+x[:]=clr(multiplicative_replacement(x))
+top=x.sum().sort_values()[::-1].index[:50].to_list()
+top
+# %%
+
+mod = pca(normalize=True)
+results = mod.fit_transform(x[top])
+fig,ax = mod.biplot(
+    y = (meta['mbal']>2).astype(int),
+    n_feat=3,
+    PC=[0,1],
+#    SPE=True,
+#    hotellingt2=True,
+    figsize=(2.5,2.5),
+    alpha_transparency=.3,
+    visible=False,
+    color_arrow='#810004',
+    verbose=0,
+    title='PCA analysis',
+    legend=False,
+)
+for t in ax.texts:
+    if len(t.get_text())<5:
+        t.remove()
+    if '(' in t.get_text():
+        s = t.get_text().split('(')
+        number = float(s[1].split(')')[0])
+        s=s[0]+'({:.2f})'.format(number)
+        a,b=t.get_position()
+        plt.setp(t,text=s,color='#333333',fontsize=5,x=a*1.3,y=b*1.3)
+for marker in ax.collections:
+    marker.set_sizes(marker.get_sizes()/8)
+ax.collections[0].set_color('#810004')
+ax.collections[1].set_color('#004481')
+ax.set_visible(True)
+fig.set_visible(True)
+ax.legend(labels=['Low balance','High balance'],
+    loc='upper right',
+    bbox_to_anchor=[.99,1.15],
+    markerscale=.9,
+    handletextpad=.1,
+)
+plt.savefig('../pca_genus.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.show()
+
 # %%
 sns.histplot(data=meta, x="mbal", hue="month")
 # %%
