@@ -9,25 +9,19 @@ from skbio.stats.composition import multiplicative_replacement, clr, ilr
 from sklearn.decomposition import PCA
 import cmasher as cmr
 from pca import pca
+plt.style.use("../lance.txt")
 
 # %%
 meta = pd.read_csv("../meta/52_bal.csv", index_col=0)
+#table = pd.read_csv("../feature_tables/52_phyla70.csv", index_col=0)
 table = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
-# %%
-#table = pd.read_csv("../feature_tables/52_phylum80.csv", index_col=0)
-s = table.sum() / table.sum().sum()
-s = s.sort_values()[::-1]
-s1 = (table > 0).sum().sort_values()[::-1]
-a, b = set(s.index[:3].to_list()), set(s1.index[:3].to_list())
-c = list(a.union(b))
-table = table.loc[:, table.columns.isin(c)]
-table.shape
-# %%
-plt.style.use("../lance.txt")
+
 # %%
 x=table.copy()
-x[:]=clr(multiplicative_replacement(x))
-top=x.sum().sort_values()[::-1].index[:50].to_list()
+x[:]=multiplicative_replacement(x)
+x[:]=clr(x)
+top=x.mean().sort_values()[::-1].index[:100].to_list()
+#top=x.columns
 top
 # %%
 
@@ -40,11 +34,11 @@ fig,ax = mod.biplot(
 #    SPE=True,
 #    hotellingt2=True,
     figsize=(2.5,2.5),
-    alpha_transparency=.3,
+    alpha_transparency=.7,
     visible=False,
     color_arrow='#810004',
     verbose=0,
-    title='PCA analysis',
+    title='PCA of top 100 taxa',
     legend=False,
 )
 for t in ax.texts:
@@ -55,28 +49,28 @@ for t in ax.texts:
         number = float(s[1].split(')')[0])
         s=s[0]+'({:.2f})'.format(number)
         a,b=t.get_position()
-        plt.setp(t,text=s,color='#333333',fontsize=5,x=a*1.3,y=b*1.3)
+        s=s.split()[0]
+        plt.setp(t,text=s,color='#333333',fontsize=5,x=a*1.45,y=b*1.45)
 for marker in ax.collections:
     marker.set_sizes(marker.get_sizes()/8)
-ax.collections[0].set_color('#810004')
-ax.collections[1].set_color('#004481')
+    marker.set(color='w',lw=.6)
+ax.collections[1].set_edgecolor('#810004')
+ax.collections[0].set_edgecolor('#004481')
 ax.set_visible(True)
 fig.set_visible(True)
 ax.legend(labels=['Low balance','High balance'],
     loc='upper right',
-    bbox_to_anchor=[.99,1.15],
-    markerscale=.9,
+    bbox_to_anchor=[.99,1.125],
+    markerscale=.99,
     handletextpad=.1,
 )
-plt.savefig('../pca_genus.pdf',dpi=300,transparent=True,bbox_inches='tight')
+#plt.savefig('../plots/pca_phylum.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.savefig('../plots/pca_genus.pdf',dpi=300,transparent=True,bbox_inches='tight')
 plt.show()
+results['topfeat'][:10]
 
 # %%
-sns.histplot(data=meta, x="mbal", hue="month")
-# %%
-cont = ["Age", "APACHE", "shannon", "simpson", "Chao1", "Death"]
-sns.pairplot(data=meta, x_vars="mbal", y_vars=cont)
-
+mod.plot()
 # %%
 meta["M"] = (meta["mbal"] > 1.7).astype(int)
 meta.groupby("M").describe()["Death"]

@@ -116,6 +116,7 @@ for j,i in enumerate(taxa[::-1]):
     )
     h-=genus[i].values
 ax.set_xlabel('')
+ax.set_xticks([])
 ax.set_xticklabels([])
 ax.set_ylim(0,1)
 ax.set_xlim(.5,52.5)
@@ -125,6 +126,8 @@ ax.legend(loc='upper left',bbox_to_anchor=[1,1],borderpad=0,)
 #ax.set_xticks([1,13.5,26.5,39.5,52])
 #ax.set_xticklabels([-4.07,.57,1.9,3.97,6.71])
 ax.set_title('Composition of stool bacteria in 52 patients at time of ICU admission',loc='center')
+
+
 plt.savefig('../plots/taxabars.pdf',dpi=300,transparent=True,bbox_inches='tight')
 
 
