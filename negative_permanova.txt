@@ -1,0 +1,44 @@
+Batch, 3 groups
+pseudo-F statistic: 1.79
+P-value: 0.157
+
+Gender, 2 groups
+pseudo-F statistic: 0.08
+P-value: 0.917
+
+ARDS, 2 groups
+pseudo-F statistic: 0.62
+P-value: 0.546
+
+Shock, 2 groups
+pseudo-F statistic: 0.35
+P-value: 0.709
+
+diabetes, 2 groups
+pseudo-F statistic: 0.34
+P-value: 0.702
+
+malignancy, 2 groups
+pseudo-F statistic: 0.46
+P-value: 0.626
+
+immunosuppressed, 2 groups
+pseudo-F statistic: 0.47
+P-value: 0.627
+
+Vancomycin, 2 groups
+pseudo-F statistic: 0.41
+P-value: 0.673
+
+Cipro, 2 groups
+pseudo-F statistic: 1.51
+P-value: 0.237
+
+year, 2 groups
+pseudo-F statistic: 2.20
+P-value: 0.112
+
+inhosp, 2 groups
+pseudo-F statistic: 1.81
+P-value: 0.171
+

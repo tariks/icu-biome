@@ -1,0 +1,28 @@
+bacto, 2 groups
+pseudo-F statistic: 34.69
+P-value: 0.001
+
+month, 2 groups
+pseudo-F statistic: 2.78
+P-value: 0.064
+
+Zosyn, 2 groups
+pseudo-F statistic: 3.82
+P-value: 0.021
+
+Enterotype, 3 groups
+pseudo-F statistic: 9.29
+P-value: 0.001
+
+min, 2 groups
+pseudo-F statistic: 4.51
+P-value: 0.021
+
+patho, 2 groups
+pseudo-F statistic: 18.04
+P-value: 0.001
+
+metab, 2 groups
+pseudo-F statistic: 2.89
+P-value: 0.051
+
