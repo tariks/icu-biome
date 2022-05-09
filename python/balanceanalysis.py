@@ -5,10 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import ticker
-from skbio.stats.composition import multiplicative_replacement, clr
-#from sklearn.preprocessing import PowerTransformer,QuantileTransformer 
 import cmasher as cmr
-from pca import pca
 from deicode.rpca import auto_rpca as rpca
 from biom import Table
 plt.style.use("../lance.txt")
@@ -44,21 +41,12 @@ def pol2cart(rho,phi):
         return a,b,ha,va
 # %%
 meta = pd.read_csv("../meta/52_bal.csv", index_col=0)
-#table = pd.read_csv("../feature_tables/52_phyla70.csv", index_col=0)
-#table = pd.read_csv("../feature_tables/52N_genus_t80_full.csv", index_col=0)
 table = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
-#table = pd.read_csv('../feature_tables/all_asv.csv',index_col=0)
-#table=table.loc[table.index.isin(meta.index)]
 T = Table(table.T.values,table.columns,table.index)
 mbal=meta['mbal']
-#norm=plt.cm.colors.CenteredNorm(vcenter=2.1,halfrange=4)
 norm=plt.cm.colors.Normalize(vmin=-4,vmax=6.5,clip=True)
-#cmap=plt.cm.get_cmap('coolwarm')
 cmap=cmr.dusk
-#cmap=cmr.ember
 arrow=dict(
-#    head_width=.3,
-#    tail_width=.6,
     width=.5,
     headwidth=3,
     headlength=3,
@@ -121,115 +109,32 @@ ax.set_xlabel('Magnitude of projection on PC2')
 ax.margins(.05)
 plt.savefig('../plots/pca_loadings.pdf',dpi=300,transparent=True,bbox_inches='tight')
 # %%
-#x=table.copy()
-#x[:]=multiplicative_replacement(x)
-#x[:]=clr(x)
-#x=pd.DataFrame(ilr(x),index=x.index)
-#top=x.mean().sort_values()[::-1].index[:].to_list()
-#x[:]=PowerTransformer(standardize=True).fit_transform(x)
-#x[:]=QuantileTransformer().fit_transform(x)
-#x[:]=StandardScaler().fit_transform(x)
-x=rpca(T)
-# %%
-mod = pca(normalize=True)
-results = mod.fit_transform(x[top])
-fig,ax = mod.biplot(
-#    y = (meta['mbal']>1.9).astype(int),
-    n_feat=4,
-    PC=[1,2],
-#    SPE=True,
-#    hotellingt2=True,
-    figsize=(2.5,2.5),
-#    alpha_transparency=.9,
-    visible=False,
-    color_arrow='#810004',
-    verbose=0,
-    title='PCA of top 100 taxa',
-    legend=False,
-    label=None,
-)
-for t in ax.texts:
-    if len(t.get_text())<5:
-        t.remove()
-    if '(' in t.get_text():
-        s = t.get_text().split('(')
-        number = float(s[1].split(')')[0])
-        s=s[0]+'({:.2f})'.format(number)
-        a,b=t.get_position()
-        rho,phi=cart2pol(a/1.11,b/1.11)
-        rho+=.2
-        a=np.cos(phi)*rho
-        b=np.sin(phi)*rho
-        ha = 'right' if a<0 else 'left'
-        va = 'top' if b<0 else 'bottom'
-        if abs(a) > abs(b):
-            va='center'
-        else:
-            ha='center'
-        plt.setp(t,text=s,color='#333333',fontsize=5,x=a,y=b,ha=ha,va=va)
-for i,marker in enumerate(ax.collections):
-    marker.set_sizes(marker.get_sizes()/6)
-#    marker.set(color='w',lw=.8,
-    marker.set(lw=0, color=colors,)
-#ax.collections[1].set_edgecolor('#810004')
-#ax.collections[0].set_edgecolor('#004481')
-ax.set_visible(True)
-fig.set_visible(True)
-ax.plot()
-'''
-ax.legend(labels=['Low balance','High balance'],
-    loc='upper right',
-    bbox_to_anchor=[.99,1.125],
-    markerscale=.99,
-    handletextpad=.1,
-)
-'''
-cbar=plt.colorbar(plt.cm.ScalarMappable(norm=norm,cmap='coolwarm'), ax=ax,
-    fraction=.03,location='right',aspect=25,shrink=.6,pad=.01
-    )
-cbar.outline.set(lw=0)
-#plt.savefig('../plots/pca_phylum.pdf',dpi=300,transparent=True,bbox_inches='tight')
-#plt.savefig('../plots/pca_genus.pdf',dpi=300,transparent=True,bbox_inches='tight')
-plt.show()
-results['topfeat'][:10]
-
-# %%
-mod.plot()
-# %%
 meta['M']=0
 meta.loc[meta['mbal']>1.9,'M']=1
-#meta.loc[meta['mbal']>4,'M']=2
+meta.loc[meta['mbal']>4,'M']=2
 meta.groupby("M").describe()["Death"]
 # %%
-sns.swarmplot(data=meta, x="M", y="Death",
-    palette='dark',hue='month',
-   # s=2.1,
-    alpha=.9,ec='w',lw=.5)
+fig,ax=plt.subplots()
+param=dict(s=3,alpha=.9,edgecolor='#121212',linewidth=.25,marker='d')
+c = sns.color_palette(['#333333',(0.867, 0.667, 0.200, 1.000)])
+g=sns.swarmplot(data=meta, x="M", y="Death",
+    palette=c,hue='month',hue_order=[0,1],
+    ax=ax,**param
+    )
 
-fig.set(figheight=1.5,figwidth=2)
+fig.set(figheight=1.5,figwidth=1.8)
 
-ax.set_xlabel('')
+ax.set_xlabel('Microbial mortality index')
 ax.set_xticklabels([
-    '<0','<1.7','>4'
+    '< 0','< 1.9','> 4'
 ])
-ax.set_ylim(0,380)
-ax.set_xlim(-.5,2.5)
-
-# %%
-
-b = meta['mbal']
-meta['M']=0
-meta.loc[b>=1,'M']=1
-meta.loc[b>4,'M']=2
-meta.groupby('M').describe()['Death']
-
-# %%
-
-#y=power_transform(x.iloc[4,:].values.reshape(-1,1),)
-y=x.iloc[4,:]
-sns.histplot(y)
-# %%
-l=results['loadings'].loc['PC1']
-l[l.abs().sort_values().index[::-1]]
-
-# %%
+ax.set_ylim(-10,380)
+ax.set_yticks([0,90,180,270,360])
+ax.set_ylabel('Death-free days')
+ax.get_legend().remove()
+h,l=ax.get_legend_handles_labels()
+h=[plt.scatter(1,1,fc='#333333',**param)]
+h.append(plt.scatter(1,1,fc=(0.867, 0.667, 0.200, 1.000),**param))
+ax.legend(h,['0','1'],loc='upper right',bbox_to_anchor=[1,1.025],title='28-day mortality',handletextpad=.5,borderaxespad=0,borderpad=0,markerscale=2,title_fontsize=6)
+#ax.set_xlim(-.5,2.5)
+plt.savefig('../plots/swarmplot.pdf',dpi=300,transparent=True,bbox_inches='tight')
