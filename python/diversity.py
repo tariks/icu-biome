@@ -6,15 +6,13 @@ import seaborn as sns
 from skbio import diversity as div
 
 # %%
-#T = pd.read_csv("./icu-biome/feature_tables/all_asv.csv", index_col=0)
-T = Artifact.load('./icu-biome/qiime/table_stool.qza').view(pd.DataFrame)
-meta = pd.read_csv("./icu-biome/meta/59meta.csv", index_col=0)
+table = Artifact.load('../qiime/table_stool.qza').view(pd.DataFrame)
+meta = pd.read_csv("../meta/meta52pc.csv", index_col=0)
 
-T = T.loc[T.index.isin(meta.index)]
-#T.loc[meta['Day']==1].T.sum().describe()
+table = table.loc[table.index.isin(meta.index)]
 
 # %%
-def rarefaction(M, seed=0, depth=6000):
+def rarefaction(M, seed=0, depth=6700):
     prng = np.random.RandomState(seed)  # reproducible results
     noccur = np.sum(M, axis=1)  # number of occurrences for each sample
     nvar = M.shape[1]  # number of variables
@@ -29,30 +27,64 @@ def rarefaction(M, seed=0, depth=6000):
 
 
 # %%
-T[:] = rarefaction(T.values)
+old = [ 'ACE',
+ 'Observed ASVs',
+ 'Chao1',
+ 'Fisher',
+ 'Pielou',
+ 'Shannon',
+ 'Simpson',
+ 'Dominant taxa',
+ 'Gini',
+ 'ace',
+ 'chao1',
+ 'dominance',
+ 'fisher_alpha',
+ 'pielou_e',
+ 'shannon',
+ 'simpson',]
+for i in old:
+    del meta[i]
+
+conv = {
+'ace': 'ACE (R)',
+ 'chao1': 'Chao1 (R)',
+ 'dominance': 'Dominance',
+ 'fisher_alpha': 'Fisher (D)',
+ 'pielou_e': 'Pielou (E)',
+ 'shannon': 'Shannon (D)',
+ 'margalef': 'Margalef (R)'
+}
 # %%
-T = T.loc[:,T.sum()>7] # .002% threshold. 8k * 51 * .00002 = 8.16
-T.sum().describe()
+#T = T[[i for i in T.columns if (T[i]>1).sum()>1]]
+T=table.copy()
+T[:] = rarefaction(table.values)
+#rel = T.loc[:,T.sum()>7] # .002% threshold. 8k * 51 * .00002 = 8.16
+T = T[[i for i in T.columns if (T[i]>0).sum()>1]]
+T.sum(axis=1).describe()
 # %%
 div_metrics= [
     "ace",
     "chao1",
-    "dominance",
+    'margalef',
     "fisher_alpha",
     "pielou_e",
     "shannon",
-    "simpson",
+    "dominance",
 ]
 for i in div_metrics:
-    meta[i] = div.alpha_diversity(i, T.astype(int).values, ids=T.index,)
-    print(meta[i].describe().T)
+    meta[conv.get(i)] = div.alpha_diversity(i, T.astype(int).values, ids=T.index,)
+    print(meta[conv.get(i)].describe().T)
+# %%
+meta['Simpson (D)'] = 1/meta['Dominance']
+meta['Simpson (E)'] = div.alpha_diversity('simpson_e',T.astype(int).values,ids=T.index)
 # %%
 %matplotlib inline
 sns.pairplot(data=meta,vars=['Death']+div_metrics,hue='Enterotype')
 
 # %%
 #meta.to_csv('./icu-biome/meta/59N_alpha.csv')
-meta.loc[meta['Day']==1].to_csv('./icu-biome/meta/52_alpha.csv')
+meta.to_csv('../meta/meta52_current.csv')
 # %%
 T.to_csv('./icu-biome/feature_tables/59N_ASV_rare6k_filt002p7.csv')
 # %%

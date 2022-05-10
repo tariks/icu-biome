@@ -4,10 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib import ticker
-from scipy import stats
-from skbio.stats.composition import multiplicative_replacement, clr, ilr
-from sklearn.decomposition import PCA
+from skbio.stats.composition import multiplicative_replacement
 import cmasher as cmr
 
 # %%
@@ -66,8 +63,8 @@ for i in ['Proteobacteria','Firmicutes','Bacteroidetes']:
     taxa+=phygen.get(i)[::-1]
     c+=list(colors.get(i))
 # %%
-phylum = pd.read_csv("../feature_tables/52_phyla70.csv", index_col=0)
-genus = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
+phylum = pd.read_csv("../feature_tables/52_phylum80.csv", index_col=0)
+genus = pd.read_csv("../feature_tables/52N_genus_t80_selbal.csv", index_col=0)
 genus['GPAC']=0
 for i in genus.columns:
     if i in gpac:
@@ -104,10 +101,15 @@ fig,ax = plt.subplots()
 fig.set(figheight=2.5,figwidth=4)
 phylum=phylum.sort_values(by=['Bacteroidetes','Firmicutes'],ascending=False)
 genus=genus.loc[phylum.index]
+low = [i for i in genus.index if meta.loc[i,'mbal']<1.9]
+high = [i for i in genus.index if meta.loc[i,'mbal']>1.9]
+genus=genus.loc[low+high]
+x=np.arange(1,len(low)+1).tolist() + np.arange(len(low)+3,55).tolist()
+
 for j,i in enumerate(taxa[::-1]):
-    ax.bar(x= np.arange(1,53),
+    ax.bar(x= x,
         #height=h,
-        height=genus[i],
+        height=genus[i].values,
         #bottom=h-genus[i].values,
         bottom=h,
         color=c[-1-j],
@@ -116,11 +118,13 @@ for j,i in enumerate(taxa[::-1]):
     )
     h+=genus[i].values
 ax.set_xlabel('')
-ax.set_xticks([])
-ax.set_xticklabels([])
+ax.set_xticks([11.5,38.5])
+ax.tick_params(axis='x',length=0,pad=2)
+ax.set_xticklabels(['Biomarker < 1.9','Biomarker > 1.9'])
 ax.set_ylim(0,1)
 ax.set_xlim(.5,52.5)
 ax.grid(False)
+ax.axvline(23.5,ls=(0, (8,8.5)),color='#121212',lw=.6)
 #ax.set_xticks([1,13.5,26.5,39.5,52])
 #ax.set_xticklabels([-4.07,.57,1.9,3.97,6.71])
 ax.set_title('Composition of stool bacteria in 52 patients at time of ICU admission',loc='center')
@@ -132,7 +136,7 @@ ax.set_yticklabels(['0%','20%','40%','60%','80%','100%'][::-1])
 #ax.yaxis.set_major_formatter(ticker.PercentFormatter(1))
 
 
-plt.savefig('../plots/taxabars.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.savefig('../plots/taxabars80_selbal.pdf',dpi=300,transparent=True,bbox_inches='tight')
 
 
 # %%

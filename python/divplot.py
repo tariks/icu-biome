@@ -4,26 +4,38 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from scipy import stats
 
 plt.style.use("../lance.txt")
 # %%
-meta = pd.read_csv('../meta/meta52pc.csv',index_col=0)
+meta = pd.read_csv('../meta/meta52_current.csv',index_col=0)
 
 # %%
-div_metrics= [
-    "ace",
-    "chao1",
-    "dominance",
-    "fisher_alpha",
-    "pielou_e",
-    "shannon",
-    "simpson",
+div_metrics = [
+# 'ACE (R)',
+ 'Chao1 (R)',
+ 'Fisher (D)',
+ 'Shannon (D)',
+ 'Pielou (E)',
+ 'Dominance',
+ 'Simpson (D)',
+ 'Simpson (E)',
 ]
+
 
 # %%
 meta['M']=0
-meta.loc[meta['mbal']>1.9,'M']=1
+meta.loc[meta['mbal']>2,'M']=1
 #meta.loc[meta['mbal']>4,'M']=
+
+# %%
+v='M'
+a = meta.loc[meta[v]==0]
+b = meta.loc[meta[v]==1]
+pvals = {i: stats.ranksums(a[i],b[i])[1] for i in div_metrics}
+for k,v in pvals.items():
+    print('{}\t{:.3f}'.format(k,v))
+
 # %%
 param = dict(boxprops=dict(
                     fill=False,
@@ -33,10 +45,11 @@ param = dict(boxprops=dict(
 )
 # %%
 fig,axs=plt.subplots(2,4)
-fig.subplots_adjust(wspace=.55,hspace=.2)
+fig.subplots_adjust(wspace=.3,hspace=.3)
+fig.set(figheight=2.75,figwidth=4.1)
 for i,v in enumerate(div_metrics):
     ax=axs.flat[i]
-    ax.margins(y=.2)
+    ax.margins(y=.075,x=.2)
     sns.boxplot(data=meta,y=v,x='M',hue='M',ax=ax,
                 linewidth=.5,
                 fliersize=0,
@@ -45,7 +58,7 @@ for i,v in enumerate(div_metrics):
                 )
 
     sns.swarmplot(data=meta,y=v,x='M',hue='M',ax=ax,
-                  size=2,alpha=.8,marker='d'
+                  size=2.55,alpha=.75,marker='^',
     )    
     ax.set(ylabel='',xlabel='',xticks=[])
     ax.set_title(v,pad=1)
@@ -55,17 +68,23 @@ for i,v in enumerate(div_metrics):
     xlim[0]-=.1
     xlim[1]+=.1
     ax.set_xlim(xlim)
-    ax.spines
-empty=axs[1,3]
+    p = pvals.get(v)
+    print(p)
+    if p < .01:
+        prefix = '** '
+    elif p < .05:
+        prefix = '* '
+    else:
+        prefix = ''
+    ax.set_xlabel(prefix+'P= {:.3f}'.format(p),fontsize=6)
+    ax.tick_params(labelsize=6)
+empty=axs.flat[-1]
 empty.set_axis_off()
 empty.set(xticks=[],yticks=[])
 h,l = axs[0,0].get_legend_handles_labels()
-l = ['< 2', '< 4', '> 4']
-l = ['< 1.9','> 1.9']
+l = ['< 2','> 2']
 empty.legend(h,l,loc='upper left',title='Biomarker',
             borderaxespad=0,borderpad=0
 )
-plt.savefig('../plots/alphabox2.pdf',dpi=300,transparent=True,bbox_inches='tight')
-# %%
-meta['M']
+plt.savefig('../plots/alphabox2_thres2.pdf',dpi=300,transparent=True,bbox_inches='tight')
 # %%
