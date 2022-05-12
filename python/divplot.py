@@ -22,14 +22,14 @@ div_metrics = [
  'Simpson (E)',
 ]
 
-
+meta=meta.iloc[1:,:]
 
 # %%
 v='M'
 a = meta.loc[meta[v]==0]
 b = meta.loc[meta[v]==1]
 pvals = {i: stats.ranksums(a[i],b[i],)[1] for i in div_metrics}
-pvals = {i: stats.ttest_ind(a[i],b[i],alternative='two-sided')[1] for i in div_metrics}
+pvals = {i: stats.ttest_ind(a[i],b[i],alternative='two-sided',equal_var=False)[1] for i in div_metrics}
 for k,v in pvals.items():
     print('{}\t{:.3f}'.format(k,v))
 
@@ -38,7 +38,7 @@ param = dict(boxprops=dict(
                     fill=False,
                     snap=True,
                     capstyle='round',
-                    alpha=.8,
+                    alpha=.85,
                     aa=True,
             )
 )
@@ -60,9 +60,10 @@ for i,v in enumerate(div_metrics):
                   size=2.55,alpha=.85,marker='^',
     )    
     ax.set(ylabel='',xlabel='',xticks=[])
-    ax.set_title(v,pad=1)
+    ax.set_title(' '+v,pad=1.3,loc='left',fontsize=6)
     ax.get_legend().remove()
-    ax.yaxis.set_major_locator(plt.MaxNLocator(5))
+    ax.yaxis.set_major_locator(plt.MaxNLocator(5,
+                    steps=[1,2,2.5,3,5,6,10],prune=None,min_n_ticks=3))
     xlim=list(ax.get_xlim())
     xlim[0]-=.1
     xlim[1]+=.1
@@ -75,15 +76,17 @@ for i,v in enumerate(div_metrics):
         prefix = '* '
     else:
         prefix = ''
-    ax.set_xlabel(prefix+'P= {:.3f}'.format(p),fontsize=6)
+    ax.set_xlabel(prefix+'P= {:.3f}'.format(p),fontsize=6,color='#333333')
     ax.tick_params(labelsize=6)
 empty=axs.flat[-1]
 empty.set_axis_off()
 empty.set(xticks=[],yticks=[])
 h,l = axs[0,0].get_legend_handles_labels()
 l = ['< 0','> 0']
-empty.legend(h,l,loc='upper left',title='MMI',
-            borderaxespad=0,borderpad=0
+leg=empty.legend(h,l,loc='upper left',title='MMI',
+            bbox_to_anchor=[.0,1.09],labelcolor='#333333',
+            borderaxespad=0,borderpad=0,
 )
+leg._legend_box.align='right'
 plt.savefig('../plots/alphabox_ttest.pdf',dpi=300,transparent=True,bbox_inches='tight')
 # %%

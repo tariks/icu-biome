@@ -40,7 +40,9 @@ def freqprint(table):
 # %%
 import re
 from collections import defaultdict
+
 phyladict = defaultdict(str)
+
 
 def parseTaxonomy(table, thres=60):
     # extracts genus and applies IDTaxa threshold
@@ -48,10 +50,10 @@ def parseTaxonomy(table, thres=60):
     cols = table.columns.to_list()
     cols = [i for i in cols if "%" in i]
     cols = [i for i in cols if "phylum" in i]
-#    cols = [i for i in cols if "genus" in i or "Enterobacteriaceae" in i]
+    #    cols = [i for i in cols if "genus" in i or "Enterobacteriaceae" in i]
     for i in cols:
         s = i.split(";")
-        phyla=s[2].split()[0]
+        phyla = s[2].split()[0]
         for j in s[::-1]:
             if "Enterobacteriaceae" in j:
                 s = j
@@ -82,9 +84,9 @@ big = big.loc[meta.index]
 s2 = freqprint(big).sort_values(ascending=False)
 print(big.shape)
 # %%
-p=pd.Series(phyladict)
-p[p=='Bacteroidota'] = 'Bacteroidetes'
-p.to_csv('../feature_tables/taxmap.csv',header=False)
+p = pd.Series(phyladict)
+p[p == "Bacteroidota"] = "Bacteroidetes"
+p.to_csv("../feature_tables/taxmap.csv", header=False)
 
 # %%
 # preview matrix
