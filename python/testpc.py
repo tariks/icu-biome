@@ -5,13 +5,36 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from skbio.stats import distance
+from skbio.stats.composition import multiplicative_replacement,clr
 from scipy.spatial.distance import pdist
 from scipy import stats
 import cmasher as cmr
 plt.style.use("../lance.txt")
 # %%
 meta=pd.read_csv('../meta/meta52_current.csv',index_col=0)
-table=pd.read_csv('../feature_tables/52N_genus_t70.csv',index_col=0)
+table=pd.read_csv('../feature_tables/52N_genus_t80.csv',index_col=0)
+# %%
+def bal(df=table):
+    x=df.copy()
+    delta=1
+    #x=x.loc[:,(x>0).sum()/52 > .25] 
+    y = x.divide(x.sum(axis=1),axis=0)
+    #delta=y[y>0].min().min()
+    #x=y
+    print(delta)
+    x[x==0]+=np.random.random(x[x==0].shape)*.9*delta +.1*delta
+    x[:] = multiplicative_replacement(x,)
+    #x[:] = clr(x)
+    x[:] = np.log10(x)
+    N = x['Enterobacteriaceae'] + x['Anaerococcus']
+    D = x['Parasutterella'] + x['Campylobacter']
+    b = (N-D)/2
+    return b
+# %%
+meta['mbal2'] = bal()
+meta.to_csv('../meta/meta52_current.csv')
+sns.histplot(data=meta,x='mbal2',hue='month',binwidth=.2)
+meta['mbal2'].describe()
 # %%
 meta['bacto']=0
 meta.loc[(.7*meta['PC2']+.6*meta['PC1'] < -.03),'bacto']=1

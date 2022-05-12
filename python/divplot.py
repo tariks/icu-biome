@@ -23,16 +23,13 @@ div_metrics = [
 ]
 
 
-# %%
-meta['M']=0
-meta.loc[meta['mbal']>2,'M']=1
-#meta.loc[meta['mbal']>4,'M']=
 
 # %%
 v='M'
 a = meta.loc[meta[v]==0]
 b = meta.loc[meta[v]==1]
-pvals = {i: stats.ranksums(a[i],b[i])[1] for i in div_metrics}
+pvals = {i: stats.ranksums(a[i],b[i],)[1] for i in div_metrics}
+pvals = {i: stats.ttest_ind(a[i],b[i],alternative='two-sided')[1] for i in div_metrics}
 for k,v in pvals.items():
     print('{}\t{:.3f}'.format(k,v))
 
@@ -41,6 +38,8 @@ param = dict(boxprops=dict(
                     fill=False,
                     snap=True,
                     capstyle='round',
+                    alpha=.8,
+                    aa=True,
             )
 )
 # %%
@@ -58,7 +57,7 @@ for i,v in enumerate(div_metrics):
                 )
 
     sns.swarmplot(data=meta,y=v,x='M',hue='M',ax=ax,
-                  size=2.55,alpha=.75,marker='^',
+                  size=2.55,alpha=.85,marker='^',
     )    
     ax.set(ylabel='',xlabel='',xticks=[])
     ax.set_title(v,pad=1)
@@ -82,9 +81,9 @@ empty=axs.flat[-1]
 empty.set_axis_off()
 empty.set(xticks=[],yticks=[])
 h,l = axs[0,0].get_legend_handles_labels()
-l = ['< 2','> 2']
-empty.legend(h,l,loc='upper left',title='Biomarker',
+l = ['< 0','> 0']
+empty.legend(h,l,loc='upper left',title='MMI',
             borderaxespad=0,borderpad=0
 )
-plt.savefig('../plots/alphabox2_thres2.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.savefig('../plots/alphabox_ttest.pdf',dpi=300,transparent=True,bbox_inches='tight')
 # %%

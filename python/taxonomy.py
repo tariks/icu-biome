@@ -14,7 +14,7 @@ meta = pd.read_csv("../meta/52_alpha.csv", index_col=0)
 # ftable = ft.actions.filter_features_conditionally(asv,.001,.01).filtered_table
 ftable = ft.actions.filter_samples(asv, 1000).filtered_table
 # %%
-ftable = taxa.actions.collapse(ftable, tax, 3).collapsed_table
+ftable = taxa.actions.collapse(ftable, tax, 7).collapsed_table
 ftable = ftable.view(pd.DataFrame)
 ftable.shape
 
@@ -39,7 +39,8 @@ def freqprint(table):
 
 # %%
 import re
-
+from collections import defaultdict
+phyladict = defaultdict(str)
 
 def parseTaxonomy(table, thres=60):
     # extracts genus and applies IDTaxa threshold
@@ -50,18 +51,21 @@ def parseTaxonomy(table, thres=60):
 #    cols = [i for i in cols if "genus" in i or "Enterobacteriaceae" in i]
     for i in cols:
         s = i.split(";")
-        for j in s:
+        phyla=s[2].split()[0]
+        for j in s[::-1]:
             if "Enterobacteriaceae" in j:
                 s = j
                 break
             elif "genus" in j:
                 s = j
+                break
             elif "phylum" in j:
                 s = j
                 break
             else:
                 pass
         name = re.split("\s\(", s)[0]
+        phyladict[name] = phyla
         score = int(re.findall("\d+%", s)[0][:-1])
         if score > thres:
             if name in df.columns:
@@ -73,10 +77,15 @@ def parseTaxonomy(table, thres=60):
 
 
 # %%
-big = parseTaxonomy(ftable, thres=80)
+big = parseTaxonomy(ftable, thres=70)
 big = big.loc[meta.index]
 s2 = freqprint(big).sort_values(ascending=False)
 print(big.shape)
+# %%
+p=pd.Series(phyladict)
+p[p=='Bacteroidota'] = 'Bacteroidetes'
+p.to_csv('../feature_tables/taxmap.csv',header=False)
+
 # %%
 # preview matrix
 x = big.loc[meta.index]

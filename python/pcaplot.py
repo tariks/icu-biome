@@ -40,12 +40,15 @@ def pol2cart(rho,phi):
             ha='center'
         return a,b,ha,va
 # %%
-meta = pd.read_csv("../meta/52_bal.csv", index_col=0)
-table = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
+meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
+table = pd.read_csv("../feature_tables/52_phylum80.csv", index_col=0)
 T = Table(table.T.values,table.columns,table.index)
-mbal=meta['mbal']
-norm=plt.cm.colors.Normalize(vmin=-4,vmax=6.5,clip=True)
-cmap=cmr.dusk
+mbal=meta['mbal2']
+mbal[mbal>0]=2
+mbal[mbal<=0]=-2
+norm=plt.cm.colors.CenteredNorm(vcenter=0,halfrange=2,clip=True)
+norm=plt.cm.colors.Normalize(vmin=-3,vmax=3,clip=True)
+
 arrow=dict(
     width=.5,
     headwidth=3,
@@ -53,8 +56,10 @@ arrow=dict(
     color='#810004',
     alpha=.5,
 )
+cmap=plt.get_cmap('coolwarm')
+cmap=cmr.apple_r
 # %%
-oord,dis = rpca(T,min_feature_frequency=10,min_feature_count=200)
+oord,dis = rpca(T,min_feature_frequency=1,min_feature_count=500)
 pc,L,ex = oord.samples, oord.features, oord.proportion_explained
 top=L['PC1']**2 + L['PC2']**2
 top= top.sort_values()[::-1]
@@ -67,12 +72,12 @@ topa,topb=a.index[0],b.index[0]
 fig,ax=plt.subplots()
 ax.scatter(pc['PC1'],pc['PC2'],
     c=c,
-    marker='o',s=20,
-    lw=0,snap=True,aa=True,alpha=.8,
+    marker='o',s=20,edgecolors='#bbbbbb',
+    lw=.5,snap=True,aa=True,alpha=.9,
 )
 #for tax in [topa,topb]:
 for tax in top.index[:3]:
-    x,y=.7*a[tax],.7*b[tax]
+    x,y=.5*a[tax],.5*b[tax]
     ax.annotate('',(x,y),xytext=(0,0),
     arrowprops=arrow,)
     rho,phi=cart2pol(x,y)
@@ -83,15 +88,15 @@ for tax in top.index[:3]:
 ax.set_xlabel('PC1, expl. var. ={:.2%}'.format(ex[0]),loc='right')
 ax.set_ylabel('PC2, expl. var. ={:.2%}'.format(ex[1]),loc='top')
 ax.set_title('Robust Aitchison PCA',loc='left')
-ax.margins(.05)
+ax.margins(.07)
 limx,limy = ax.get_xlim(),ax.get_ylim()
-ax.set_ylim(min(limy[0],.6*b[topb]-.1),max(limy[1],.6*b[topb]+.1))
-ax.set_xlim(min(limx[0],.6*a[topa]-.2),max(limx[1],.6*a[topa]+.2))
+ax.set_ylim(min(limy[0],.45*b[topb]-.1),max(limy[1],.45*b[topb]+.1))
+ax.set_xlim(min(limx[0],.45*a[topa]-.2),max(limx[1],.45*a[topa]+.2))
 cbar=plt.colorbar(plt.cm.ScalarMappable(norm=norm,cmap=cmap), ax=ax,
     fraction=.03,location='right',aspect=25,shrink=.6,pad=.01
     )
 cbar.outline.set(lw=0)
-plt.savefig('../plots/pca_genus.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.savefig('../plots/pca_phylum80bin.pdf',dpi=300,transparent=True,bbox_inches='tight')
 # %%
 fig,axs=plt.subplots(2,1,sharex=False)
 fig.set(figheight=6,figwidth=2)
@@ -107,7 +112,7 @@ ax=axs[1]
 ax.barh(y=b.index,width=b)
 ax.set_xlabel('Magnitude of projection on PC2')
 ax.margins(.05)
-plt.savefig('../plots/pca_loadings.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.savefig('../plots/pca_loadings_phylum.pdf',dpi=300,transparent=True,bbox_inches='tight')
 # %%
 meta['M']=0
 meta.loc[meta['mbal']>1.9,'M']=1

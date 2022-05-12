@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from skbio.stats.composition import multiplicative_replacement
-import cmasher as cmr
 
 # %%
 gpac = [
@@ -42,10 +40,10 @@ mypal= [
 mypal = sns.color_palette(mypal,desat=1)
 # %%
 plt.style.use("../lance.txt")
-meta = pd.read_csv("../meta/52_bal.csv", index_col=0)
-
+meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
+taxmap = pd.read_csv('../feature_tables/taxmap.csv',index_col=0,header=None)
 phygen = {
-    'Bacteroidetes': ['Bacteroides','Parabacteroides','Porphyromonas','Other Bacteroidetes'],
+    'Bacteroidetes': ['Bacteroides','Parabacteroides','Alistipes','Other Bacteroidetes'],
     'Proteobacteria': ['Enterobacteriaceae','Pseudomonas','Acinetobacter','Other Proteobacteria'],
     'Firmicutes': ['GPAC','Enterococcus','Staphylococcus','Other Firmicutes'],
 }
@@ -62,57 +60,56 @@ c = []
 for i in ['Proteobacteria','Firmicutes','Bacteroidetes']:
     taxa+=phygen.get(i)[::-1]
     c+=list(colors.get(i))
+meta['mmi'].describe()
 # %%
-phylum = pd.read_csv("../feature_tables/52_phylum80.csv", index_col=0)
-genus = pd.read_csv("../feature_tables/52N_genus_t80_selbal.csv", index_col=0)
+#genus = pd.read_csv("../feature_tables/52N_genus_t80.csv", index_col=0)
+genus = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
 genus['GPAC']=0
 for i in genus.columns:
     if i in gpac:
         genus['GPAC']+=genus[i]
         del genus[i]
-phylum['Bacteroidetes'] = phylum['Bacteroidota'].copy()
-phylum = phylum[['Bacteroidetes','Proteobacteria','Firmicutes']]
-for i in ['Bacteroidetes','Proteobacteria','Firmicutes']: genus['Other '+i]=0
-#genus = genus.divide(genus.sum(axis=1),axis=0)
-genus['Other Firmicutes'] = phylum['Firmicutes']-genus[phygen['Firmicutes']].sum(axis=1)
-genus['Other Proteobacteria'] = phylum['Proteobacteria']-genus[phygen['Proteobacteria']].sum(axis=1)
-genus['Other Bacteroidetes'] = phylum['Bacteroidetes']-genus[phygen['Bacteroidetes']].sum(axis=1)
-#genus = genus.divide(genus.sum(axis=1),axis=0)
-print(genus.max().sort_values(ascending=False).index[:20].to_list())
+nont = [i for i in genus.columns if i not in taxa]
+for i in ['Bacteroidetes','Proteobacteria','Firmicutes']:
+    genus['Other '+i]=0
+    for t in nont:
+        if taxmap.loc[t].values[0] == i:
+            genus['Other '+i] += genus[t]
 
 genus = genus[taxa]
-#phylum = phylum.divide(phylum.sum(axis=1),axis=0)
-phylum[:] = multiplicative_replacement(phylum)
-genus[:] = multiplicative_replacement(genus)
-
-order = meta['mbal'].sort_values(ascending=True).index
+genus = genus.divide(genus.sum(axis=1),axis=0)
+allBacter = genus[phygen['Bacteroidetes']].sum(axis=1)
+order = allBacter.sort_values(ascending=False).index
 genus=genus.loc[order]
 
 params=dict(
         width=1,
-        lw=.2,
-        ec='#919191',
+        lw=.25,
+#        ec='#292929',
         snap=True,
+        aa=True,
 #        alpha=.9,
 )
 # %%
 h= np.zeros(52)
+mthres=.0
 fig,ax = plt.subplots()
 fig.set(figheight=2.5,figwidth=4)
-phylum=phylum.sort_values(by=['Bacteroidetes','Firmicutes'],ascending=False)
-genus=genus.loc[phylum.index]
-low = [i for i in genus.index if meta.loc[i,'mbal']<1.9]
-high = [i for i in genus.index if meta.loc[i,'mbal']>1.9]
+low = [i for i in genus.index if meta.loc[i,'mmi']<mthres]
+high = [i for i in genus.index if meta.loc[i,'mmi']>mthres]
 genus=genus.loc[low+high]
 x=np.arange(1,len(low)+1).tolist() + np.arange(len(low)+3,55).tolist()
+#genus=genus.loc[meta['mbal2'].sort_values().index]
 
 for j,i in enumerate(taxa[::-1]):
+    ec='#888888' if i in ['Bacteroides','GPAC','Parabacteroides',] else '#444444'
     ax.bar(x= x,
         #height=h,
         height=genus[i].values,
         #bottom=h-genus[i].values,
         bottom=h,
         color=c[-1-j],
+        ec=ec,
         label=i,
         **params,
     )
@@ -120,11 +117,11 @@ for j,i in enumerate(taxa[::-1]):
 ax.set_xlabel('')
 ax.set_xticks([11.5,38.5])
 ax.tick_params(axis='x',length=0,pad=2)
-ax.set_xticklabels(['Biomarker < 1.9','Biomarker > 1.9'])
+ax.set_xticklabels(['MMI < 0','MMI > 0'])
 ax.set_ylim(0,1)
 ax.set_xlim(.5,52.5)
 ax.grid(False)
-ax.axvline(23.5,ls=(0, (8,8.5)),color='#121212',lw=.6)
+ax.axvline(len(low)+1.5,ls=(0, (8,8.5)),color='#121212',lw=.6)
 #ax.set_xticks([1,13.5,26.5,39.5,52])
 #ax.set_xticklabels([-4.07,.57,1.9,3.97,6.71])
 ax.set_title('Composition of stool bacteria in 52 patients at time of ICU admission',loc='center')
@@ -136,7 +133,8 @@ ax.set_yticklabels(['0%','20%','40%','60%','80%','100%'][::-1])
 #ax.yaxis.set_major_formatter(ticker.PercentFormatter(1))
 
 
-plt.savefig('../plots/taxabars80_selbal.pdf',dpi=300,transparent=True,bbox_inches='tight')
+#plt.savefig('../plots/taxabars80.pdf',dpi=300,transparent=True,bbox_inches='tight')
+plt.savefig('../plots/taxabars70.pdf',dpi=300,transparent=True,bbox_inches='tight')
 
 
 # %%
