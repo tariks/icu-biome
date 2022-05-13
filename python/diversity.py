@@ -55,7 +55,11 @@ div_metrics = [
     "dominance",
 ]
 for i in div_metrics:
-    meta[conv.get(i)] = div.alpha_diversity(i, T.astype(int).values, ids=T.index,)
+    meta[conv.get(i)] = div.alpha_diversity(
+        i,
+        T.astype(int).values,
+        ids=T.index,
+    )
     print(meta[conv.get(i)].describe().T)
 # %%
 meta["Simpson (D)"] = 1 / meta["Dominance"]

@@ -15,7 +15,10 @@ def cox(v, df=meta, pen=0.01, l1=0.5, event="month", robust=True):
     f = "+".join(v) if type(v) == list else v
     modparams = dict(penalizer=pen, l1_ratio=l1)
     mod = lifelines.CoxPHFitter(**modparams)
-    params = dict(robust=robust, formula=f,)
+    params = dict(
+        robust=robust,
+        formula=f,
+    )
     mod.fit(df, duration_col="Death", event_col=event, **params)
     summary = mod.summary
     cols = ["exp(coef)", "exp(coef) lower 95%", "exp(coef) upper 95%", "p"]
@@ -86,7 +89,11 @@ m
 # %%
 m = pd.DataFrame(columns=m.columns)
 for i in v:
-    x = cox(i, pen=0.1, robust=True,)  # event='D24')
+    x = cox(
+        i,
+        pen=0.1,
+        robust=True,
+    )  # event='D24')
     m.loc[i] = 0
     for c in x.columns:
         m.loc[i, c] += x.loc[i, c]

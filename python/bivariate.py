@@ -177,7 +177,10 @@ for t in cats:
             a, b = meta[t], meta[g]
             for i in [a, b]:
                 row += ["{:.0%}".format(i.sum() / i.size)]
-            _, ctab = stats.contingency.crosstab(a, b,)
+            _, ctab = stats.contingency.crosstab(
+                a,
+                b,
+            )
             teststat, pval = stats.fisher_exact(ctab)
             row += [teststat, pval]
             out.loc[len(out.index)] = row
