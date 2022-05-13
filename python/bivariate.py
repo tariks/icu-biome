@@ -1,93 +1,100 @@
 # %%
-import numpy as np
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 from scipy import stats
-plt.style.use("../lance.txt")
-meta = pd.read_csv('../meta/meta52_current.csv',index_col=0)
+
+meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
 
 # %%
 meta.columns.to_list()
 # %%
 v = [
- 'Gender',
- 'Age',
- 'ARDS',
- 'Shock',
- 'APACHE',
- 'inhosp',
- 'month',
- 'year',
- 'Death',
- 'ICU',
- 'Vent',
- 'PF',
- 'malignancy',
- 'diabetes',
- 'immunosuppressed',
- 'Ceftriaxone',
- 'Zosyn',
- 'Vancomycin',
- 'Cipro',
- 'Zithromax',
- 'M',
- 'ACE (R)',
- 'Chao1 (R)',
- 'Fisher (D)',
- 'Pielou (E)',
- 'Shannon (D)',
- 'Dominance',
- 'Simpson (D)',
- 'Simpson (E)',
- 'Sepsis3',
- 'D24',
- 'mmi']
-vdict = {i: i for i in v}
-vdict['mmi']='MMI'
-vdict['M']='MMI > 0'
-vdict['D24']='Death < 24 days'
-vdict['month']='Death < 28 days'
-vdict['year']='Death < 1 year'
-vdict['inhosp']='In-hospital death'
-vdict['Cipro']='Ciprofloxacin'
-vdict['Zithromax']='Azithromycin'
-vdict['Zosyn']='Piperacillin-tazobactam'
-vdict['immunosuppressed']='Immunosuppressed'
-vdict['diabetes']='Diabetes'
-vdict['malignancy']='Malignancy'
-vdict['PF']='PF ratio'
-vdict['Vent']='Ventilator-free days'
-vdict['ICU']='ICU-free days'
-vdict['Death']='Death-free days'
-vdict['APACHE']='APACHE II score'
-vdict['Sepsis3']='Sepsis-3'
-vdict['Gender']='Gender (male)'
-vdict['Shock']='Septic shock'
- # %%
-contin = [
- 'Age',
- 'APACHE',
- 'Death',
- 'ICU',
- 'Vent',
- 'PF',
- 'ACE (R)',
- 'Chao1 (R)',
- 'Fisher (D)',
- 'Pielou (E)',
- 'Shannon (D)',
- 'Dominance',
- 'Simpson (D)',
- 'Simpson (E)',
- 'mmi'
+    "Gender",
+    "Age",
+    "ARDS",
+    "Shock",
+    "APACHE",
+    "inhosp",
+    "month",
+    "year",
+    "Death",
+    "ICU",
+    "Vent",
+    "PF",
+    "malignancy",
+    "diabetes",
+    "immunosuppressed",
+    "Ceftriaxone",
+    "Zosyn",
+    "Vancomycin",
+    "Cipro",
+    "Zithromax",
+    "M",
+    "ACE (R)",
+    "Chao1 (R)",
+    "Fisher (D)",
+    "Pielou (E)",
+    "Shannon (D)",
+    "Dominance",
+    "Simpson (D)",
+    "Simpson (E)",
+    "Sepsis3",
+    "D24",
+    "mmi",
 ]
-outcomes=['Death','ICU','Vent','month','inhosp','year','D24']
-mmis = ['mmi','M']
+vdict = {i: i for i in v}
+vdict["mmi"] = "MMI"
+vdict["M"] = "MMI > 0"
+vdict["D24"] = "Death < 24 days"
+vdict["month"] = "Death < 28 days"
+vdict["year"] = "Death < 1 year"
+vdict["inhosp"] = "In-hospital death"
+vdict["Cipro"] = "Ciprofloxacin"
+vdict["Zithromax"] = "Azithromycin"
+vdict["Zosyn"] = "Piperacillin-tazobactam"
+vdict["immunosuppressed"] = "Immunosuppressed"
+vdict["diabetes"] = "Diabetes"
+vdict["malignancy"] = "Malignancy"
+vdict["PF"] = "PF ratio"
+vdict["Vent"] = "Ventilator-free days"
+vdict["ICU"] = "ICU-free days"
+vdict["Death"] = "Death-free days"
+vdict["APACHE"] = "APACHE II score"
+vdict["Sepsis3"] = "Sepsis-3"
+vdict["Gender"] = "Gender (male)"
+vdict["Shock"] = "Septic shock"
+# %%
+contin = [
+    "Age",
+    "APACHE",
+    "Death",
+    "ICU",
+    "Vent",
+    "PF",
+    "ACE (R)",
+    "Chao1 (R)",
+    "Fisher (D)",
+    "Pielou (E)",
+    "Shannon (D)",
+    "Dominance",
+    "Simpson (D)",
+    "Simpson (E)",
+    "mmi",
+]
+outcomes = ["Death", "ICU", "Vent", "month", "inhosp", "year", "D24"]
+mmis = ["mmi", "M"]
 cats = [i for i in v if i not in contin]
 # %%
 # ranksums
-cols =['Test variable','Group variable','n1 (+)','Median[IQR] (+)','n2 (-)','Median[IQR] (-)','U statistic','P value']
+cols = [
+    "Test variable",
+    "Group variable",
+    "n1 (+)",
+    "Median[IQR] (+)",
+    "n2 (-)",
+    "Median[IQR] (-)",
+    "U statistic",
+    "P value",
+]
 out = pd.DataFrame(columns=cols)
 for t in contin:
     for g in cats:
@@ -96,20 +103,32 @@ for t in contin:
         elif t in mmis and g in mmis:
             pass
         else:
-            row = [vdict.get(t),vdict.get(g)]
-            a,b = meta.loc[meta[g]==1,t],meta.loc[meta[g]==0,t]
-            for i in [a,b]:
-                row+= [i.size,'{: ,.2g} [{: ,.2g}-{: ,.2g}]'.format(i.median(),i.quantile(.25),i.quantile(.75))]
-            teststat,pval = stats.ranksums(a,b,nan_policy='omit')
-            row+=[teststat,pval]
+            row = [vdict.get(t), vdict.get(g)]
+            a, b = meta.loc[meta[g] == 1, t], meta.loc[meta[g] == 0, t]
+            for i in [a, b]:
+                row += [
+                    i.size,
+                    "{: ,.2g} [{: ,.2g}-{: ,.2g}]".format(
+                        i.median(), i.quantile(0.25), i.quantile(0.75)
+                    ),
+                ]
+            teststat, pval = stats.ranksums(a, b, nan_policy="omit")
+            row += [teststat, pval]
             out.loc[len(out.index)] = row
 out
 # %%
-out=out.loc[out['P value'].sort_values().index]
-out.to_csv('../bivariate/ranksums.csv',index=None)
+out = out.loc[out["P value"].sort_values().index]
+out.to_csv("../bivariate/ranksums.csv", index=None)
 # %%
 # corr
-cols =['Variable 1','Variable 2','Median[IQR] (V1)','Median[IQR] (V2)','Spearman corr.','P value',]
+cols = [
+    "Variable 1",
+    "Variable 2",
+    "Median[IQR] (V1)",
+    "Median[IQR] (V2)",
+    "Spearman corr.",
+    "P value",
+]
 out = pd.DataFrame(columns=cols)
 for t in contin:
     for g in contin:
@@ -118,24 +137,34 @@ for t in contin:
         elif t == g:
             pass
         else:
-            row = [vdict.get(t),vdict.get(g)]
-            a,b = meta[t],meta[g]
-            for i in [a,b]:
-                row+= ['{: ,.2g} [{: ,.2g}-{: ,.2g}]'.format(i.median(),i.quantile(.25),i.quantile(.75))]
-            teststat,pval = stats.spearmanr(a,b,nan_policy='omit')
-            row+=[teststat,pval]
+            row = [vdict.get(t), vdict.get(g)]
+            a, b = meta[t], meta[g]
+            for i in [a, b]:
+                row += [
+                    "{: ,.2g} [{: ,.2g}-{: ,.2g}]".format(
+                        i.median(), i.quantile(0.25), i.quantile(0.75)
+                    )
+                ]
+            teststat, pval = stats.spearmanr(a, b, nan_policy="omit")
+            row += [teststat, pval]
             out.loc[len(out.index)] = row
 out
 # %%
-out=out.loc[out['P value'].sort_values().index]
-out.to_csv('../bivariate/spearman.csv',index=None)
+out = out.loc[out["P value"].sort_values().index]
+out.to_csv("../bivariate/spearman.csv", index=None)
 out
-
 
 
 # %%
 # fish
-cols =['Variable 1','Variable 2','N1 (%)','N2 (%)','Odds ratio','P value',]
+cols = [
+    "Variable 1",
+    "Variable 2",
+    "N1 (%)",
+    "N2 (%)",
+    "Odds ratio",
+    "P value",
+]
 out = pd.DataFrame(columns=cols)
 for t in cats:
     for g in cats:
@@ -144,17 +173,20 @@ for t in cats:
         elif t == g:
             pass
         else:
-            row = [vdict.get(t),vdict.get(g)]
-            a,b = meta[t],meta[g]
-            for i in [a,b]:
-                row+= ['{:.0%}'.format(i.sum()/i.size)]
-            _, ctab = stats.contingency.crosstab(a,b,)
-            teststat,pval = stats.fisher_exact(ctab)
-            row+=[teststat,pval]
+            row = [vdict.get(t), vdict.get(g)]
+            a, b = meta[t], meta[g]
+            for i in [a, b]:
+                row += ["{:.0%}".format(i.sum() / i.size)]
+            _, ctab = stats.contingency.crosstab(
+                a,
+                b,
+            )
+            teststat, pval = stats.fisher_exact(ctab)
+            row += [teststat, pval]
             out.loc[len(out.index)] = row
 out
 # %%
-out=out.loc[out['P value'].sort_values().index]
-out.to_csv('../bivariate/fisher.csv',index=None)
+out = out.loc[out["P value"].sort_values().index]
+out.to_csv("../bivariate/fisher.csv", index=None)
 out
 # %%
