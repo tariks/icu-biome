@@ -68,7 +68,7 @@ def parserank(csv='../bivariate/ranksums.csv',var='Death < 28 days'):
     table = table.loc[rows]
     cols = ['Test variable',
             '{} (n={}), Median[IQR]'.format(var,table.iloc[0,2]),
-            '{} (n={}), Median[IQR]'.format(var.replace('>','<'),table.iloc[0,4]),
+            '{} (n={}), Median[IQR]'.format(var.replace('<','>'),table.iloc[0,4]),
             'U statistic',
             'P value',
     ]
@@ -78,16 +78,15 @@ def parserank(csv='../bivariate/ranksums.csv',var='Death < 28 days'):
                table.loc[i,'Median[IQR] (+)'],
                table.loc[i,'Median[IQR] (-)'],
                '{: .2g}'.format(table.loc[i,'U statistic']),
-               '{: .2g}'.format(table.loc[i,'P value']),
+               '{:.2g}'.format(table.loc[i,'P value']),
         ]
         out.loc[len(out.index),cols] = row
     return out
-#x=parserank()
-#x.to_csv('../bivariate/pretty_ranksums_month.csv',index=None)
-x=parserank(var='MMI > 0')
-x.to_csv('../bivariate/pretty_ranksums_mmibinary.csv',index=None)
+x=parserank()
+x.to_csv('../bivariate/pretty_ranksums_month.csv',index=None)
+#x=parserank(var='Death < 24 days')
+#x.to_csv('../bivariate/pretty_ranksums_mmibinary.csv',index=None)
 #x.to_csv('../bivariate/pretty_ranksums_24days.csv',index=None)
-#parsebiv(var='MMI > 0').to_csv('../bivariate/pretty_ranksums_mmibinary.csv',index=None)
 x
 
 
@@ -112,15 +111,15 @@ def parserankc(csv='../bivariate/ranksums.csv',var='Death-free days'):
                table.loc[i,'Median[IQR] (+)'],
                table.loc[i,'Median[IQR] (-)'],
                '{: .2g}'.format(table.loc[i,'U statistic']),
-               '{: .2g}'.format(table.loc[i,'P value']),
+               '{:.2g}'.format(table.loc[i,'P value']),
             ]
         out.loc[len(out.index),cols] = row
     return out
-x=parserankc()
+x=parserankc(var='MMI')
 x
 # %%
-x.to_csv('../bivariate/pretty_ranksums_deathfree.csv',index=None)
-#x.to_csv('../bivariate/pretty_ranksums_mmi.csv',index=None)
+#x.to_csv('../bivariate/pretty_ranksums_deathfree.csv',index=None)
+x.to_csv('../bivariate/pretty_ranksums_mmi.csv',index=None)
 # %%
 def parsefish(csv='../bivariate/fisher.csv',var='Death < 28 days'):
     table = pd.read_csv(csv,index_col=None)
@@ -131,31 +130,32 @@ def parsefish(csv='../bivariate/fisher.csv',var='Death < 28 days'):
     else:
         prev = table.iloc[0,3]
     cols = ['Variable',
-            'Prevalence (%)',
-            'With {} (Prevalence={}), %'.format(var,prev),
-            'Neither, %',
+            'Number +',
+            'With {} (n={})'.format(var,meta[vdict.get(var)].sum()),
+            'Neither',
             'Odds ratio',
             'P value',
         ]
     out = pd.DataFrame(columns=cols)
     for i in table.index:
         other = table.loc[i,'Variable 1'] if var==table.loc[i,'Variable 2'] else table.loc[i,'Variable 2']
-        prev = table.loc[i,'N1 (%)'] if var==table.loc[i,'Variable 2'] else table.loc[i,'N2 (%)']
-        both = (meta[vdict.get(other)]+meta[vdict.get(var)]==2).sum()/52
-        neither = (meta[vdict.get(other)]+meta[vdict.get(var)]==0).sum()/52
+        both = (meta[vdict.get(other)]+meta[vdict.get(var)]==2).sum()
+        neither = (meta[vdict.get(other)]+meta[vdict.get(var)]==0).sum()
         row = [other,
-               prev[:-1],
-               '{:.0%}'.format(both)[:-1],
-               '{:.0%}'.format(neither)[:-1],
+               meta[vdict.get(other)].sum().astype(int),
+               '{}'.format(both),
+               '{}'.format(neither),
                '{: .2g}'.format(table.loc[i,'Odds ratio']),
-               '{: .2g}'.format(table.loc[i,'P value']),
+               '{:.2g}'.format(table.loc[i,'P value']),
             ]
         out.loc[len(out.index),cols] = row
     return out
-x=parsefish(var='MMI > 0')
+x=parsefish()
 x
 # %%
-x.to_csv('../bivariate/pretty_fish_mmibin.csv',index=None)
+#x.to_csv('../bivariate/pretty_fish_mmibin.csv',index=None)
+#x.to_csv('../bivariate/pretty_fish_24days.csv',index=None)
+x.to_csv('../bivariate/pretty_fish_month.csv',index=None)
 
 # %%
 def parsespear(csv='../bivariate/spearman.csv',var='Death-free days'):

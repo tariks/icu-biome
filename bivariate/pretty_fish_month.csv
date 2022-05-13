@@ -1,27 +1,27 @@
-Variable,Prevalence (%),"With Death < 28 days (Prevalence=54%), %","Neither, %",Odds ratio,P value
-ARDS,50,37,33, 5.1, 0.012
-ARDS,50,37,33, 5.1, 0.012
-MMI > 0,60,40,27, 4.2, 0.023
-MMI > 0,60,40,27, 4.2, 0.023
-Malignancy,25,19,40, 3.9, 0.064
-Malignancy,25,19,40, 3.9, 0.064
-Vancomycin,54,35,27, 2.5, 0.16
-Septic shock,54,35,27, 2.5, 0.16
-Vancomycin,54,35,27, 2.5, 0.16
-Septic shock,54,35,27, 2.5, 0.16
-Immunosuppressed,38,25,33, 2.1, 0.26
-Immunosuppressed,38,25,33, 2.1, 0.26
-Piperacillin-tazobactam,60,37,23, 2.1, 0.26
-Piperacillin-tazobactam,60,37,23, 2.1, 0.26
-Ciprofloxacin,23,15,38, 2, 0.35
-Ciprofloxacin,23,15,38, 2, 0.35
-Ceftriaxone,27,12,31, 0.55, 0.37
-Ceftriaxone,27,12,31, 0.55, 0.37
-Gender (male),46,21,21, 0.55, 0.4
-Gender (male),46,21,21, 0.55, 0.4
-Diabetes,35,21,33, 1.6, 0.56
-Diabetes,35,21,33, 1.6, 0.56
-Azithromycin,17,8,37, 0.63, 0.72
-Azithromycin,17,8,37, 0.63, 0.72
-Sepsis-3,65,37,17, 1.3, 0.77
-Sepsis-3,65,37,17, 1.3, 0.77
+Variable,Number +,With Death < 28 days (n=28.0),Neither,Odds ratio,P value
+ARDS,26,19,17, 5.1,0.012
+ARDS,26,19,17, 5.1,0.012
+MMI > 0,31,21,14, 4.2,0.023
+MMI > 0,31,21,14, 4.2,0.023
+Malignancy,13,10,21, 3.9,0.064
+Malignancy,13,10,21, 3.9,0.064
+Vancomycin,28,18,14, 2.5,0.16
+Septic shock,28,18,14, 2.5,0.16
+Vancomycin,28,18,14, 2.5,0.16
+Septic shock,28,18,14, 2.5,0.16
+Immunosuppressed,20,13,17, 2.1,0.26
+Immunosuppressed,20,13,17, 2.1,0.26
+Piperacillin-tazobactam,31,19,12, 2.1,0.26
+Piperacillin-tazobactam,31,19,12, 2.1,0.26
+Ciprofloxacin,12,8,20, 2,0.35
+Ciprofloxacin,12,8,20, 2,0.35
+Ceftriaxone,14,6,16, 0.55,0.37
+Ceftriaxone,14,6,16, 0.55,0.37
+Gender (male),24,11,11, 0.55,0.4
+Gender (male),24,11,11, 0.55,0.4
+Diabetes,18,11,17, 1.6,0.56
+Diabetes,18,11,17, 1.6,0.56
+Azithromycin,9,4,19, 0.63,0.72
+Azithromycin,9,4,19, 0.63,0.72
+Sepsis-3,34,19,9, 1.3,0.77
+Sepsis-3,34,19,9, 1.3,0.77
