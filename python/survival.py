@@ -83,20 +83,23 @@ v = clin + abx + micro
 
 # %%
 f = ["APACHE"]
-m = cox(["M"] + f, pen=0.01, event="month")
-m = cox(["mmi"] + f, pen=0.01, event="month")
+m = cox(["M"] + f, pen=0.1, event="month")
+m = cox(["mmi"] + f, pen=0.1, event="month")
 m
 # %%
 m = pd.DataFrame(columns=m.columns)
 for i in v:
     x = cox(
         i,
-        pen=0.01,
+        pen=0.1,
+        robust=True,
     )  # event='D24')
     m.loc[i] = 0
     for c in x.columns:
         m.loc[i, c] += x.loc[i, c]
 m = m.loc[m["p"].sort_values().index]
+# %%
+m
 # %%
 m.to_csv("../survival/univariate.csv")
 
@@ -105,13 +108,13 @@ from itertools import combinations
 
 cols = [
     "model",
-    "model LL",
-    "model AIC",
-    "Concordance",
     "variable",
     "exp(coef)",
     "exp(coef) lower 95%",
     "exp(coef) upper 95%",
+    "model LL",
+    "model AIC",
+    "Concordance",
     "p",
 ]
 # %%
@@ -119,18 +122,21 @@ m = pd.DataFrame(columns=cols)
 for combo in combinations(v, 2):
     for op in ["+", "*"]:
         f = op.join(list(combo))
-        x = cox(f, pen=0.01, event="month")
-        x["model"] = f
-        x["variable"] = x.index.copy().to_list()
-        x = x[cols]
-        idx = x.index.to_list()
-        if len(idx) == 3 and x.iloc[-1, -1] > 0.05:
-            pass
-        else:
-            for row in x.index:
-                m.loc[len(m.index)] = x.loc[row].copy()
+        x = cox(f, pen=0.1, robust=True, event="month")
+        if x["model LL"][0] > -100:
+            x["model"] = f
+            x["variable"] = x.index.copy().to_list()
+            x = x[cols]
+            idx = x.index.to_list()
+            if len(idx) == 3 and x.iloc[-1, -1] > 0.05:
+                pass
+            else:
+                for row in x.index:
+                    m.loc[len(m.index)] = x.loc[row].copy()
 # %%
 m = m.loc[m["model LL"].sort_values(ascending=False).index]
+# m = m.loc[m['model AIC']<200]
+m = m.loc[m["model LL"] > -99]
 m
 # %%
 m.to_csv("../survival/bivariate.csv", index=False)
@@ -138,19 +144,25 @@ m.to_csv("../survival/bivariate.csv", index=False)
 # %%
 m = pd.DataFrame(columns=cols)
 for combo in combinations(v, 4):
-    f = "+".join(list(combo))
-    x = cox(f, pen=0.01, event="month")
-    if x.iloc[0, -3] > -95:
-        x["model"] = f
-        x["variable"] = x.index.copy().to_list()
-        x = x[cols]
-        idx = x.index.to_list()
-        for row in x.index:
-            m.loc[len(m.index)] = x.loc[row].copy()
+    if "mmi" in combo and "M" in combo:
+        pass
+    else:
+        f = "+".join(list(combo))
+        x = cox(f, pen=0.1, robust=True, event="month")
+        if x.iloc[0, -3] > -98 and x.iloc[0, -2] < 200:
+            x["model"] = f
+            x["variable"] = x.index.copy().to_list()
+            x = x[cols]
+            idx = x.index.to_list()
+            for row in x.index:
+                m.loc[len(m.index)] = x.loc[row].copy()
 # %%
 m = m.loc[m["model LL"].sort_values(ascending=False).index]
 m
 # %%
-m.iloc[:100, :].to_csv("../survival/quadvariate.csv", index=False)
+# m.iloc[:100, :].to_csv("../survival/trivariate.csv", index=False)
+# m.iloc[:100, :].to_csv("../survival/quadvariate.csv", index=False)
+
+m.loc[m["model LL"] > -95].to_csv("../survival/quadvariate.csv", index=False)
 
 # %%

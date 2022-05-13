@@ -1,0 +1,32 @@
+Gender,Gender (male)
+Age,Age
+ARDS,ARDS
+Shock,Septic shock
+APACHE,APACHE II score
+inhosp,In-hospital death
+month,Death < 28 days
+year,Death < 1 year
+Death,Death-free days
+ICU,ICU-free days
+Vent,Ventilator-free days
+PF,PF ratio
+malignancy,Malignancy
+diabetes,Diabetes
+immunosuppressed,Immunosuppressed
+Ceftriaxone,Ceftriaxone
+Zosyn,Piperacillin-tazobactam
+Vancomycin,Vancomycin
+Cipro,Ciprofloxacin
+Zithromax,Azithromycin
+M,MMI > 0
+ACE (R),ACE (R)
+Chao1 (R),Chao1 (R)
+Fisher (D),Fisher (D)
+Pielou (E),Pielou (E)
+Shannon (D),Shannon (D)
+Dominance,Dominance
+Simpson (D),Simpson (D)
+Simpson (E),Simpson (E)
+Sepsis3,Sepsis-3
+D24,Death < 24 days
+mmi,MMI

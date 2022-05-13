@@ -145,7 +145,9 @@ def parsefish(csv="../bivariate/fisher.csv", var="Death < 28 days"):
         "Variable",
         "n (+)",
         "(+) and {} (n={})".format(var, meta[vdict.get(var)].sum().astype(int)),
-        "(-) and {} (n={})".format(var.replace('<','>='), (meta[vdict.get(var)]==0).sum().astype(int)),
+        "(-) and {} (n={})".format(
+            var.replace("<", ">="), (meta[vdict.get(var)] == 0).sum().astype(int)
+        ),
         "Odds ratio",
         "P value",
     ]
@@ -170,12 +172,12 @@ def parsefish(csv="../bivariate/fisher.csv", var="Death < 28 days"):
     return out
 
 
-x = parsefish(var='Death < 24 days')
+x = parsefish(var="Death < 24 days")
 x
 # %%
-#x.to_csv('../bivariate/pretty_fish_mmibin.csv',index=None)
-x.to_csv('../bivariate/pretty_fish_24days.csv',index=None)
-#x.to_csv("../bivariate/pretty_fish_month.csv", index=None)
+# x.to_csv('../bivariate/pretty_fish_mmibin.csv',index=None)
+x.to_csv("../bivariate/pretty_fish_24days.csv", index=None)
+# x.to_csv("../bivariate/pretty_fish_month.csv", index=None)
 
 # %%
 def parsespear(csv="../bivariate/spearman.csv", var="Death-free days"):
