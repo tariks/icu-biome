@@ -133,7 +133,7 @@ def parsefish(csv="../bivariate/fisher.csv", var="Death < 28 days"):
     table = pd.read_csv(csv, index_col=None)
     rows = [
         i
-        for i in table.index
+        for i in table.index[::2]
         if var in table.loc[i, ["Variable 1", "Variable 2"]].to_list()
     ]
     table = table.loc[rows]
@@ -143,9 +143,9 @@ def parsefish(csv="../bivariate/fisher.csv", var="Death < 28 days"):
         prev = table.iloc[0, 3]
     cols = [
         "Variable",
-        "Number +",
-        "With {} (n={})".format(var, meta[vdict.get(var)].sum()),
-        "Neither",
+        "n (+)",
+        "(+) and {} (n={})".format(var, meta[vdict.get(var)].sum().astype(int)),
+        "(-) and {} (n={})".format(var.replace('<','>='), (meta[vdict.get(var)]==0).sum().astype(int)),
         "Odds ratio",
         "P value",
     ]
@@ -170,12 +170,12 @@ def parsefish(csv="../bivariate/fisher.csv", var="Death < 28 days"):
     return out
 
 
-x = parsefish()
+x = parsefish(var='Death < 24 days')
 x
 # %%
-# x.to_csv('../bivariate/pretty_fish_mmibin.csv',index=None)
-# x.to_csv('../bivariate/pretty_fish_24days.csv',index=None)
-x.to_csv("../bivariate/pretty_fish_month.csv", index=None)
+#x.to_csv('../bivariate/pretty_fish_mmibin.csv',index=None)
+x.to_csv('../bivariate/pretty_fish_24days.csv',index=None)
+#x.to_csv("../bivariate/pretty_fish_month.csv", index=None)
 
 # %%
 def parsespear(csv="../bivariate/spearman.csv", var="Death-free days"):
