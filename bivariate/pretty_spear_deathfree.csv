@@ -1,0 +1,25 @@
+Variable,Spearman corr. (Death-free days),P value
+MMI,-0.43,0.0013
+MMI,-0.43,0.0013
+APACHE II score,-0.25,0.074
+APACHE II score,-0.25,0.074
+Age,-0.24,0.082
+Age,-0.24,0.082
+Simpson (E),-0.11,0.44
+Simpson (E),-0.11,0.44
+Pielou (E),-0.07,0.6
+Pielou (E),-0.07,0.6
+Dominance, 0.07,0.63
+Simpson (D),-0.07,0.63
+Dominance, 0.07,0.63
+Simpson (D),-0.07,0.63
+Shannon (D),-0.04,0.78
+Shannon (D),-0.04,0.78
+PF ratio, 0.03,0.86
+PF ratio, 0.03,0.86
+ACE (R), 0.02,0.87
+ACE (R), 0.02,0.87
+Fisher (D), 0.02,0.89
+Fisher (D), 0.02,0.89
+Chao1 (R), 0.02,0.9
+Chao1 (R), 0.02,0.9

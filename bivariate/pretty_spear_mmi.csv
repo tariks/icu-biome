@@ -1,0 +1,29 @@
+Variable,Spearman corr. (MMI),P value
+Death-free days,-0.43,0.0013
+Death-free days,-0.43,0.0013
+ICU-free days,-0.42,0.0018
+ICU-free days,-0.42,0.0018
+Ventilator-free days,-0.30,0.029
+Ventilator-free days,-0.30,0.029
+Pielou (E),-0.15,0.29
+Pielou (E),-0.15,0.29
+APACHE II score,-0.14,0.31
+APACHE II score,-0.14,0.31
+Simpson (E),-0.11,0.43
+Simpson (E),-0.11,0.43
+Shannon (D),-0.09,0.53
+Shannon (D),-0.09,0.53
+PF ratio,-0.09,0.53
+PF ratio,-0.09,0.53
+Simpson (D),-0.06,0.65
+Simpson (D),-0.06,0.65
+Dominance, 0.06,0.65
+Dominance, 0.06,0.65
+Fisher (D),-0.05,0.71
+Fisher (D),-0.05,0.71
+Age, 0.05,0.73
+Age, 0.05,0.73
+ACE (R),-0.05,0.75
+ACE (R),-0.05,0.75
+Chao1 (R),-0.04,0.77
+Chao1 (R),-0.04,0.77
