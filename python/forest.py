@@ -1,16 +1,18 @@
 # %%
-%matplotlib inline
+#%matplotlib inline
 import proplot as pplt
 import numpy as np
 import pandas as pd
 import lifelines
 
 pplt.rc.fontsize = 7
-pplt.rc.labelsize = 7
-pplt.rc.ticklabelsize = 7
+pplt.rc["tick.labelsize"] = 7
+pplt.rc["grid.linestyle"] = ":"
+pplt.rc["label.size"] = 7
+pplt.rc["cmap.robust"] = True
 pplt.rc.textcolor = "#121212"
 pplt.rc.cycle = "Set1"
-pplt.rc.titlepad = 10
+pplt.rc.titlepad = 9
 pplt.rc["meta.width"] = 0.6
 pplt.rc["axes.facecolor"] = "#ffffff"
 pplt.rc["text.antialiased"] = True
@@ -20,7 +22,8 @@ pplt.rc["lines.antialiased"] = True
 pplt.rc.fontfamily = "Source Sans Pro"
 # pplt.rc.fontfamily='Noto Sans'
 # pplt.rc.fontfamily='Fira Sans'
-
+# %%
+pplt.config_inline_backend()
 # %%
 def sigstar(n):
     x = int(-np.log10(n))
@@ -35,7 +38,14 @@ vdict = {v: k for k, v in vdict_r.items()}
 
 # %%
 kparam = dict(ci_show=False, xlabel="", yticks=[], aa=True)
-kparam = dict(ci_show=True, ci_alpha=0.08, xlabel="", yticks=[], aa=True, lw=1,)
+kparam = dict(
+    ci_show=True,
+    ci_alpha=0.08,
+    xlabel="",
+    grid=True,
+    aa=True,
+    lw=1.2,
+)
 
 
 def plotkm2(ax, v="M"):
@@ -48,7 +58,7 @@ def plotkm2(ax, v="M"):
     km.plot(
         **kparam,
         ax=ax,
-        label="{} (n={})".format(str(vdict[v]).replace(">", "<"), a.shape[0])
+        label="{} (n={})".format(str(vdict[v]).replace(">", "<"), b.shape[0])
     )
 
 
@@ -64,7 +74,10 @@ idx += [
     "ARDS",
     "APACHE II score",
 ]
-idx += ["Age", "Gender (male)"]
+idx += [
+    "Gender (male)",
+    "Age",
+]
 idx += ["MMI > 0", "MMI"]
 x = x.loc[idx]
 x
@@ -95,7 +108,9 @@ fig.format(
     xloc="none",
     yloc="left",
 )
-fig.set(figheight=2.75,)
+fig.set(
+    figheight=2.75,
+)
 ax = axs[0, 0]
 ax.hlines(
     x1=x["exp(coef) lower 95%"],
@@ -104,14 +119,15 @@ ax.hlines(
     color="#121212",
     snap=True,
     aa=True,
-    lw=1.5,
+    lw=1,
+    alpha=0.5,
 )
-ax.axvline(1, color="#121212", snap=True, aa=True, lw=1, alpha=0.5)
+ax.axvline(1, color="#121212", snap=True, aa=True, lw=0.6, alpha=0.6)
 ax.scatterx(
     x=x["exp(coef)"],
     y=yticks,
     c="#333333",
-    s=25,
+    s=22,
     marker="D",
     snap=True,
     aa=True,
@@ -126,18 +142,19 @@ ax.format(
     xlim=(-0, 4.5),
     grid=False,
     ylim=ylim,
-    title="Forest plot of univariate Cox analysis",
-    titleloc="right",
+    title="Univariate Cox analysis",
+    titleloc="left",
     yloc="none",
 )
 
 
-twin = ax.twiny(xloc=("axes", -0.05), xcolor="crimson", xlabel="Hazard ratio",)
+twin = ax.twiny(
+    xloc=("axes", -0.05),
+    xcolor="#9F1800",
+    xlabel="Hazard ratio",
+)
 twin.format(
     xlim=ax.get_xlim(),
-    #    labelsize=7,
-    #    fontsize=7,
-    #    ticklabelsize=7,
 )
 
 
@@ -150,9 +167,9 @@ for i, v in enumerate(x.index):
     tmp = vdict_r[v]
     if meta[tmp].max() == 1:
         panel.text(
-            0.3,
+            0.25,
             yticks[i],
-            s="(n={}) ".format(meta[tmp].sum().astype(int)) + str(v) + sigs,
+            s="  (n={}) ".format(meta[tmp].sum().astype(int)) + str(v) + sigs,
             va="center",
             ha="left",
         )  # ,fontsize=7)
@@ -170,7 +187,11 @@ panel.format(
     xloc="none",
     yloc="none",
 )
-tparam = dict(weight="bold", ha="left", va="center",)
+tparam = dict(
+    weight="demi",
+    ha="left",
+    va="center",
+)
 panel.text(0, 20.3, s="Microbiome variables", **tparam)
 panel.text(0, 4.3, s="Antibacterials", **tparam)
 panel.text(0, 12.3, s="Clinical variables", **tparam)
@@ -186,7 +207,7 @@ ax.twinx(
 )
 ax.format(
     ylim=(0.2, 1),
-    xlim=(0, 30),
+    xlim=(0, 40),
     yticks="auto",
     yformatter="{x:.0%}",
     fontsize=7,
@@ -197,9 +218,10 @@ ax.format(
     xlabel="",
     lw=0.6,
     grid=True,
-    title="Kaplan-Meier survival curves",
+    title="Kaplan-Meier curves",
+    ylabel="Survivorship",
+    ylabelpad=30,
 )
-
 ax.twiny(
     xloc=("axes", -0.05),
     # xcolor="crimson",
@@ -208,7 +230,13 @@ ax.twiny(
 )
 plotkm2(ax=ax)
 h, l = ax.get_legend_handles_labels()
-leg = ax.legend(h, l, ncols=1, fontsize=7, frame=False,)
+leg = ax.legend(
+    h,
+    l,
+    ncols=1,
+    fontsize=7,
+    frame=False,
+)
 print(fig.get_figwidth(), fig.get_figheight())
 for t in ax.texts:
     if "time" in t.get_text():
@@ -216,6 +244,7 @@ for t in ax.texts:
 for i in ax.lines:
     i.set(lw=1, snap=True, aa=True)
 
+# drawmedian(ax,)
 
 # %%
 fig.savefig("../plots/forest.pdf", dpi=600, transparent=False, bbox_inches="tight")
@@ -229,5 +258,48 @@ aaas2 = 4.72 1.96
 ams3 = 5.5 2.2
 ams2 = 4.5 1.89
 """
+
+# %%
+def q13(v):
+    q1 = int(v.quantile(0.25))
+    q3 = int(v.quantile(0.75))
+    return "{},{}".format(q1, q3)
+
+
+def drawmedian(ax, vector=meta["Death"], group="M", where="left"):
+    med = vector.median()
+    mediqr = q13(vector)
+    pos = vector[meta[group] == 1].median()
+    posiqr = q13(vector[meta[group] == 1])
+    neg = vector[meta[group] == 0].median()
+    neqiqr = q13(vector[meta[group] == 0])
+    set1 = pplt.get_colors("Set1")[:2]
+    colors = [set1[0], "#333333", set1[1]]
+    ax.vlines(x=[pos, med, neg], y1=-0.04, y2=0.01, lw=1, alpha=0.8, colors=colors)
+    ax.text(
+        x=pos,
+        y=0,
+        s="Median[IQR]={}[{}]".format(pos, posiqr),
+        color=colors[0],
+        ha="right",
+        transform="data",
+    )
+    ax.text(
+        x=med,
+        y=0,
+        s="Median[IQR]={}[{}]".format(med, mediqr),
+        color=colors[1],
+        ha="left",
+        transform="data",
+    )
+    ax.text(
+        x=neg,
+        y=0,
+        s="Median[IQR]={}[{}]".format(neg, negiqr),
+        color=colors[2],
+        ha="left",
+        transform="data",
+    )
+
 
 # %%

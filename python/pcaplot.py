@@ -2,14 +2,28 @@
 %matplotlib inline
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from matplotlib import ticker
-import cmasher as cmr
 from deicode.rpca import auto_rpca as rpca
 from biom import Table
+import proplot as pplt
 
-plt.style.use("../lance.txt")
+pplt.rc.fontsize = 7
+pplt.rc["tick.labelsize"] = 7
+pplt.rc["grid.linestyle"] = ":"
+pplt.rc["label.size"] = 7
+pplt.rc['cmap.robust'] = True
+#pplt.rc['cmap.robust'] = False
+pplt.rc.textcolor = "#121212"
+pplt.rc.cycle = "Set1"
+pplt.rc.titlepad = 9
+pplt.rc["meta.width"] = 0.6
+pplt.rc["axes.facecolor"] = "#ffffff"
+pplt.rc["text.antialiased"] = True
+pplt.rc["lines.antialiased"] = True
+pplt.config_inline_backend()
+
+# pplt.rc.fontfamily='TeX Gyre Heros'
+pplt.rc.fontfamily = "Source Sans Pro"
+#plt.style.use("../lance.txt")
 gpac = [
     "Anaerococcus",
     "Fenollaria",
@@ -48,34 +62,49 @@ def pol2cart(rho, phi):
 
 # %%
 meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
-table = pd.read_csv("../feature_tables/52N_genus_t80.csv", index_col=0)
+table = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
 T = Table(table.T.values, table.columns, table.index)
 mbal = meta["mmi"]
-# mbal[mbal>0]=1.5
-# mbal[mbal<=0]=-1.5
-norm = plt.cm.colors.CenteredNorm(vcenter=0, halfrange=2, clip=True)
-norm = plt.cm.colors.Normalize(vmin=-3, vmax=3, clip=True)
+#norm = plt.cm.colors.CenteredNorm(vcenter=0, halfrange=2, clip=True)
+#norm = plt.cm.colors.Normalize(vmin=-3, vmax=3, clip=True)
 
-arrow = dict(
-    width=0.5,
-    headwidth=3,
-    headlength=3,
-    color="#810004",
-    alpha=0.5,
-)
-cmap = plt.get_cmap("coolwarm")
-cmap = cmr.apple_r
 # %%
-oord, dis = rpca(T, min_feature_frequency=30, min_feature_count=100)
+oord, dis = rpca(T, min_feature_frequency=0, min_feature_count=10)
 pc, L, ex = oord.samples, oord.features, oord.proportion_explained
 top = L["PC1"] ** 2 + L["PC2"] ** 2
 top = top.sort_values()[::-1]
 print(top[:10], top.shape[0])
 a = L["PC1"][L["PC1"].abs().sort_values()[::-1].index]
 b = L["PC2"][L["PC2"].abs().sort_values()[::-1].index]
-c = cmap(norm(mbal[pc.index]))
+#c = cmap(norm(mbal[pc.index]))
 # c=plt.cm.get_cmap('coolwarm')(norm(mbal[pc.index]))
 topa, topb = a.index[0], b.index[0]
+meta['PC1'] = pc.loc[meta.index,'PC1']
+meta['PC2'] = pc.loc[meta.index,'PC2']
+# %%
+fig, ax = pplt.subplot(
+    journal="nat1",
+    fontsize=7,
+    labelsize=7,
+    ticklabelsize=7,
+    tickminor=False,
+    xloc='bottom',
+    yloc='left',
+)
+
+ax.scatter(x='PC1',y='PC2',data=meta,
+           c='mmi',colorbar='r',
+           cmap='Stellar',
+           alpha=.9,
+           snap=True,
+           aa=True,
+)
+
+
+
+
+
+# %%
 fig, ax = plt.subplots()
 ax.scatter(
     pc["PC1"],
