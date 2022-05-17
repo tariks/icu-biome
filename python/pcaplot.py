@@ -2,28 +2,39 @@
 %matplotlib inline
 import numpy as np
 import pandas as pd
-from deicode.rpca import auto_rpca as rpca
-from biom import Table
 import proplot as pplt
+from biom import Table
+from deicode.rpca import auto_rpca as rpca
+from skbio.stats.composition import clr, multiplicative_replacement
+from scipy.cluster.hierarchy import leaves_list, linkage
 
 pplt.rc.fontsize = 7
 pplt.rc["tick.labelsize"] = 7
 pplt.rc["grid.linestyle"] = ":"
 pplt.rc["label.size"] = 7
-pplt.rc['cmap.robust'] = True
-#pplt.rc['cmap.robust'] = False
+pplt.rc["font.small"] = 7
+pplt.rc["font.large"] = 7
+pplt.rc["abc.size"] = '7pt'
+pplt.rc["meta.color"] = '#121212'
+pplt.rc["cmap.robust"] = True
+pplt.rc["title.border"] = False
+pplt.rc["abc.border"] = False
+# pplt.rc['cmap.robust'] = False
 pplt.rc.textcolor = "#121212"
+pplt.rc['meta.color'] = "#121212"
 pplt.rc.cycle = "Set1"
-pplt.rc.titlepad = 9
+pplt.rc.titlepad = 3
+pplt.rc.inlineformat = 'retina'
 pplt.rc["meta.width"] = 0.6
 pplt.rc["axes.facecolor"] = "#ffffff"
 pplt.rc["text.antialiased"] = True
 pplt.rc["lines.antialiased"] = True
+pplt.rc["formatter.zerotrim"] = False
+pplt.rc["subplots.align"] = True
+pplt.rc["cmap.sequential"] = 'Batlow'
+pplt.rc["cmap.sequential"] = 'Balance'
+pplt.rc["colorbar.width"] = .08
 pplt.config_inline_backend()
-
-# pplt.rc.fontfamily='TeX Gyre Heros'
-pplt.rc.fontfamily = "Source Sans Pro"
-#plt.style.use("../lance.txt")
 gpac = [
     "Anaerococcus",
     "Fenollaria",
@@ -40,175 +51,169 @@ gpac = [
     "Murdochiella",
     "Sarcina",
 ]
+aerobes = [
+    "Staphylococcus",
+    "Enterobacteriaceae",
+    "Lactobacillus",
+    "Enterococcus",
+    "Acinetobacter",
+    "Pseudomonas",
+    "Streptococcus",
+]
+#pplt.rc.fontfamily = "TeX Gyre Heros"
+pplt.rc.fontfamily = "Source Sans Pro"
 
 
+# %%
 def cart2pol(x, y):
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
     return rho, phi
-
 
 def pol2cart(rho, phi):
     a = np.cos(phi) * rho
     b = np.sin(phi) * rho
     ha = "right" if a < 0 else "left"
     va = "top" if b < 0 else "bottom"
-    if abs(a) > abs(b):
-        va = "center"
-    else:
-        ha = "center"
+    #if abs(a) > abs(b):
+    #    va = "center"
+    #else:
+    #    ha = "center"
     return a, b, ha, va
 
 
 # %%
+table = pd.read_csv("../feature_tables/52N_genus_t80.csv", index_col=0)
 meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
-table = pd.read_csv("../feature_tables/52N_genus_t70.csv", index_col=0)
-T = Table(table.T.values, table.columns, table.index)
 mbal = meta["mmi"]
 #norm = plt.cm.colors.CenteredNorm(vcenter=0, halfrange=2, clip=True)
 #norm = plt.cm.colors.Normalize(vmin=-3, vmax=3, clip=True)
 
 # %%
-oord, dis = rpca(T, min_feature_frequency=0, min_feature_count=10)
+table = pd.read_csv("../feature_tables/52N_genus_t80.csv", index_col=0)
+T = Table(table.T.values, table.columns, table.index)
+meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
+oord, dis = rpca(T, min_feature_frequency=20, min_feature_count=5)
 pc, L, ex = oord.samples, oord.features, oord.proportion_explained
+meta=meta.loc[meta.index.isin(pc.index)]
 top = L["PC1"] ** 2 + L["PC2"] ** 2
 top = top.sort_values()[::-1]
 print(top[:10], top.shape[0])
 a = L["PC1"][L["PC1"].abs().sort_values()[::-1].index]
 b = L["PC2"][L["PC2"].abs().sort_values()[::-1].index]
-#c = cmap(norm(mbal[pc.index]))
-# c=plt.cm.get_cmap('coolwarm')(norm(mbal[pc.index]))
 topa, topb = a.index[0], b.index[0]
 meta['PC1'] = pc.loc[meta.index,'PC1']
 meta['PC2'] = pc.loc[meta.index,'PC2']
+meta.shape
+
+
 # %%
 fig, ax = pplt.subplot(
     journal="nat1",
-    fontsize=7,
-    labelsize=7,
-    ticklabelsize=7,
     tickminor=False,
     xloc='bottom',
     yloc='left',
 )
-
-ax.scatter(x='PC1',y='PC2',data=meta,
-           c='mmi',colorbar='r',
-           cmap='Stellar',
+ax.scatter(x=meta['PC1'],y=meta['PC2'],
+           c=(meta['mmi']>0).astype(int),colorbar='r',
+           cmap='batlow',
            alpha=.9,
            snap=True,
            aa=True,
 )
-
-
-
-
+ax.format(
+    xlabel='PC1 (explained variance ={:.2%})'.format(oord.proportion_explained[0]),
+    ylabel='PC2 (explained variance ={:.2%})'.format(oord.proportion_explained[1]),
+    gridalpha=.6,
+    gridlinewidth=.3,
+)
 
 # %%
-fig, ax = plt.subplots()
-ax.scatter(
-    pc["PC1"],
-    pc["PC2"],
-    c=c,
-    marker="o",
-    s=20,
-    edgecolors="#bbbbbb",
-    lw=0.5,
-    snap=True,
-    aa=True,
-    alpha=0.7,
-)
-# for tax in [topa,topb]:
-for tax in top.index[:5]:
-    x, y = 0.52 * a[tax], 0.52 * b[tax]
-    ax.annotate(
-        "",
-        (x, y),
-        xytext=(0, 0),
-        arrowprops=arrow,
-    )
-    rho, phi = cart2pol(x, y)
-    x, y, ha, va = pol2cart(rho + 0.02, phi)
-    ax.text(x, y, tax, ha=ha, va=va, fontsize=5)
+from sklearn.decomposition import PCA
+from adjustText import adjust_text
+x = pd.read_csv("../feature_tables/52N_genus_t80.csv", index_col=0)
+s = (x > 0).sum() / 52
+s = s[s.sort_values(ascending=False).index]
+s = s[s > 0.2]
+x = pd.read_csv("../feature_tables/genus_t80_nozero.csv", index_col=0)
+#x/=x.sum(axis=1)
+x=x[s.index.to_list()[:30]]
+x[:]=multiplicative_replacement(x)
+x[:]=clr(x)
 
-ax.set_xlabel("PC1, expl. var. ={:.2%}".format(ex[0]), loc="right")
-ax.set_ylabel("PC2, expl. var. ={:.2%}".format(ex[1]), loc="top")
-ax.set_title("Robust Aitchison PCA", loc="left")
-ax.margins(0.07)
-limx, limy = ax.get_xlim(), ax.get_ylim()
-ax.set_ylim(min(limy[0], 0.55 * b[topb] - 0.1), max(limy[1], 0.55 * b[topb] + 0.025))
-ax.set_xlim(min(limx[0], 0.55 * a[topa] - 0.2), max(limx[1], 0.55 * a[topa] + 0.2))
-cbar = plt.colorbar(
-    plt.cm.ScalarMappable(norm=norm, cmap=cmap),
-    ax=ax,
-    fraction=0.03,
-    location="right",
-    aspect=25,
-    shrink=0.6,
-    pad=0.01,
-)
-cbar.outline.set(lw=0)
-plt.savefig("../plots/pca_genus80.pdf", dpi=300, transparent=True, bbox_inches="tight")
-# %%
-fig, axs = plt.subplots(2, 1, sharex=False)
-fig.set(figheight=6, figwidth=2)
-fig.subplots_adjust(hspace=0.2)
-a = a[:20].sort_values()[::-1]
-b = b[:20].sort_values()[::-1]
-ax.margins(0.05)
-ax = axs[0]
-ax.set_xlabel("Magnitude of projection on PC1")
-ax.set_title("Top 20 taxa by PC loading")
-ax.barh(y=a.index, width=a)
-ax = axs[1]
-ax.barh(y=b.index, width=b)
-ax.set_xlabel("Magnitude of projection on PC2")
-ax.margins(0.05)
-plt.savefig(
-    "../plots/pca_loadings_genus80.pdf", dpi=300, transparent=True, bbox_inches="tight"
-)
-# %%
-meta["M"] = 0
-meta.loc[meta["mbal"] > 1.9, "M"] = 1
-meta.loc[meta["mbal"] > 4, "M"] = 2
-meta.groupby("M").describe()["Death"]
-# %%
-fig, ax = plt.subplots()
-param = dict(s=3, alpha=0.9, edgecolor="#121212", linewidth=0.25, marker="d")
-c = sns.color_palette(["#333333", (0.867, 0.667, 0.200, 1.000)])
-g = sns.swarmplot(
-    data=meta,
-    x="M",
-    y="Death",
-    palette=c,
-    hue="month",
-    hue_order=[0, 1],
-    ax=ax,
-    **param
-)
+#x[:]=np.log10(x)
+#x[x>0]=np.log2(x[x>0])
+#x[:]=quantile_transform(x,)
+#x[:]=power_transform(x)
 
-fig.set(figheight=1.5, figwidth=1.8)
+#x[:]=StandardScaler().fit_transform(x)
+pca=PCA(whiten=True,n_components=2)
+pca.fit(x)
+xproj = pca.transform(x)
+loadings=pd.DataFrame(pca.components_.T,index=x.columns,columns=['PC1','PC2'])
+l1,l2=loadings['PC1'].copy(),loadings['PC2'].copy()
+l1=l1[l1.abs().sort_values(ascending=False).index]
+l2=l2[l2.abs().sort_values(ascending=False).index]
+L=loadings**2
+L=L.sum(axis=1).sort_values(ascending=False)
 
-ax.set_xlabel("Microbial mortality index")
-ax.set_xticklabels(["< 0", "< 1.9", "> 4"])
-ax.set_ylim(-10, 380)
-ax.set_yticks([0, 90, 180, 270, 360])
-ax.set_ylabel("Death-free days")
-ax.get_legend().remove()
-h, l = ax.get_legend_handles_labels()
-h = [plt.scatter(1, 1, fc="#333333", **param)]
-h.append(plt.scatter(1, 1, fc=(0.867, 0.667, 0.200, 1.000), **param))
-ax.legend(
-    h,
-    ["0", "1"],
-    loc="upper right",
-    bbox_to_anchor=[1, 1.025],
-    title="28-day mortality",
-    handletextpad=0.5,
-    borderaxespad=0,
-    borderpad=0,
-    markerscale=2,
-    title_fontsize=6,
+# %%
+fig,axs=pplt.subplots(nrows=2,ncols=1,share=True,hspace=0,journal='nat1')
+ax=axs[0]
+ax.margins(.05)
+ax.scatter(x=xproj[:,0],y=xproj[:,1],
+            c=(mbal>0).astype(int),
+            #cmap='vik',
+            cmap='vlag',
+            robust= False,
+            colorbar='right',
+            colorbar_kw={'width': .08, 'length': .9,
+                    'label': 'MMI',
+                    'labelloc': 'right',
+                    'pad': .5,
+                    },
+            alpha=.7,
 )
-# ax.set_xlim(-.5,2.5)
-plt.savefig("../plots/swarmplot.pdf", dpi=300, transparent=True, bbox_inches="tight")
+ax.format(yloc='left',xloc='bottom',xtickdir='in')
+fig.format(
+    xlabel='PC1 (explained variance ={:.2%})'.format(pca.explained_variance_ratio_[0]),
+    ylabel='PC2 (explained variance ={:.2%})'.format(pca.explained_variance_ratio_[1]),
+    gridalpha=.7,
+    gridlinewidth=.3,
+)
+ax1=axs[1]
+ax1.format(ylim=ax.get_ylim(),xlim=ax.get_xlim(),yloc='left',xloc='bottom',)
+taxa=L[:7].index.to_list()
+taxa+=[i for i in l1[:2].index.to_list() if i not in taxa]
+taxa+=[i for i in l2[:2].index.to_list() if i not in taxa]
+texts=[]
+for i in taxa:
+    a = l1[i]*4
+    b = l2[i]*4
+    arrows=[]
+    #ax.arrow(0,0,a,b,width=.005,head_width=.01,length_includes_head=True,color='black',alpha=1)
+    arrows.append(ax1.annotate("", xy=(a, b), xytext=(0, 0),
+             arrowprops=dict(
+                arrowstyle="->",
+                shrinkA=0,
+                shrinkB=6,
+                ),
+             ))
+    rho,phi=cart2pol(a,b)
+    a,b,ha,va=pol2cart(rho+.2,phi)
+    texts.append(ax1.text(x=a,y=b,s=i,fontsize=7,ha=ha,va=va))
+adjust_text(texts,ax=ax1,autoalign='xy') #,autoalign='xy')
+xproj.shape
+# %%
+fig.savefig('../plots/pca_genus80.pdf',dpi=600,bbox_inches='tight')
+# %%
+def roll(sides=20,n=1):
+    for i in range(n):
+        print(np.random.randint(1,sides+1))
+
+roll()
+# %%
+roll()
+# %%
+roll(10,2)
+# %%

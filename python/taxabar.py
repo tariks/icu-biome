@@ -53,7 +53,7 @@ mypal = [
 ]
 # mypal = sns.color_palette(mypal,desat=1)
 # %%
-#%matplotlib inline
+%matplotlib inline
 pplt.config_inline_backend()
 # plt.style.use("../lance.txt")
 meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
@@ -129,9 +129,8 @@ x = np.arange(1, len(low) + 1).tolist() + np.arange(len(low) + 3, 55).tolist()
 
 # %%
 
-
 fig, ax = pplt.subplot(
-    xlim=(0.5, 54.5),
+    xlim=(0.5, 51.5),
     journal="pnas2",
     fontsize=7,
     labelsize=7,
@@ -143,23 +142,19 @@ fig, ax = pplt.subplot(
 
 
 ax.bar(
-    x=x,
+    x=np.arange(52)+1,
     height=genus.values,
     width=1,
     stack=True,
-    # cycle='thermal_r',
-    # cycle='turku_r',
-    # cycle='tokyo_r',
-    # cycle='sunrise',
     # cycle='hawaii',
     cycle="twilight_r",
-    cycle_kw={"N": 14},
-    ec="#202020",
-    lw=0.25,
+    cycle_kw={"N": 13, 'shift': -1},
+    ec="#101010",
+    lw=.25,
     labels=genus.columns,
     edgefix=True,
     snap=True,
-    alpha=0.95,
+    alpha=.9,
 )
 ax.format(
     fontsize=7,
@@ -174,7 +169,7 @@ ax.format(
 ax.axhline(
     y=0,
     xmin=0,
-    xmax=22 / 54,
+    xmax=21.5/52,
     lw=2,
     color="#176AD4",
     solid_capstyle="butt",
@@ -182,7 +177,7 @@ ax.axhline(
 )
 ax.axhline(
     y=0,
-    xmin=23 / 54,
+    xmin=21.5/52,
     xmax=1,
     lw=2,
     color="#B71D14",
@@ -190,8 +185,8 @@ ax.axhline(
     clip_on=False,
 )
 
-ax.text(x=11.5, y=-0.03, s="MMI < 0", ha="center", va="top", transform="data")
-ax.text(x=40.5, y=-0.03, s="MMI > 0", ha="center", va="top", transform="data")
+ax.text(x=11, y=-0.03, s="MMI < 0", ha="center", va="top", transform="data")
+ax.text(x=52.5-15.5, y=-0.03, s="MMI > 0", ha="center", va="top", transform="data")
 
 # leg=ax.legend(loc='right',ncols=1,fontsize=7,frame=False)
 h, l = ax.get_legend_handles_labels()
@@ -204,8 +199,14 @@ print(fig.get_figheight(), fig.get_figwidth())
 # %%
 
 
+
 # plt.savefig('../plots/taxabars80.pdf',dpi=300,transparent=True,bbox_inches='tight')
 fig.savefig("../plots/taxabars80.pdf", dpi=600, transparent=False, bbox_inches="tight")
 
 
+# %%
+genus.shape
+# %%
+genus.index=np.arange(52)+1
+genus.to_csv('../plots/taxabardata.csv')
 # %%
