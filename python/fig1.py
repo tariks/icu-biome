@@ -2,6 +2,7 @@
 %matplotlib inline
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import proplot as pplt
 from skbio.stats.composition import clr, multiplicative_replacement
 from scipy.cluster.hierarchy import leaves_list, linkage
@@ -96,10 +97,10 @@ def pol2cart(rho, phi):
 # %%
 arr = np.array([[1,1,3],[2,2,4],[2,2,0],[5,6,7],[8,9,10]])
 arr=np.array([
-    [1,3,3],
-    [2,3,3],
-    [4,4,0],
-    [5,6,7],
+    [1,1,3,3,3,3,0],
+    [2,2,3,3,3,3,0],
+    [4,4,4,4,4,4,0],
+    [5,6,7,8,9,10,0],
 ])
 fig,axs = pplt.subplots(arr,share=False,abcloc='l',
                         #journal='pnas2',
@@ -111,10 +112,11 @@ fig,axs = pplt.subplots(arr,share=False,abcloc='l',
                         ref=1,
                         hspace=(0,None,None),
                         abc=True,
-                        wratios=(1,1,1),
-                        hratios=(1.0,1,1.2,.5,),
+                        wratios=(1,1,1,1,1,1,0),
+                        hratios=(1.0,1,1.2,.75,),
                         alignx=False,
                         aligny=False,
+                        #wequal=True,
                         )
 
 ## pca plot
@@ -324,16 +326,25 @@ param = dict(
     lw=.5,
 )
 idx = (meta["mmi"]>0)
-
-for ax,div in zip(axs[4:7],div_metrics[:3]):
-    d = {'y': [meta.loc[~idx,div], meta.loc[idx,div]],
+for ax,div in zip(axs[4:10],div_metrics[:6]):
+    d = {'y': [meta.loc[~idx,div].values, meta.loc[idx,div].values],
          'x': np.array([1,2])}
-    ax.boxplot(
+    y1=pd.Series(meta.loc[~idx,div].values,name=0).to_list()
+    y2=pd.Series(meta.loc[idx,div].values,name=1).to_list()
+    c=['blue' if i==0 else 'red' for i in meta['M']]
+    ax.scatterx(
+        x=meta['M']+1,
         y=meta[div],
-        **param
+        c=c,
+        s=10,
+        alpha=.5,
+        lw=.3,
+        ec='#333333',
     )
+
     ax.format(
         xloc='bottom',
+        xlim=(-1,4),
         xticks='none',
         xticklabels='none',
         yloc='left',
