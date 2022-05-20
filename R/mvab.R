@@ -7,12 +7,14 @@ x <- as.mvabund(x)
 plot(x)
 meanvar.plot(x)
 
-mod1 <- manyglm(x ~ mmi, data=meta, cor.type="shrink",)
+mod1 <- manyglm(x ~ Zosyn, data=meta, cor.type="I",)
 plot(mod1)
-anov <- anova.manyglm(mod1,p.uni="adjusted",cor.type='shrink')
+anov <- anova.manyglm(mod1,p.uni="unadjusted",cor.type='I')
 anov <- summary.manyglm(mod2,p.uni="adjusted")
 a <- colnames(x)
 summary.manyglm(mod1)
 names(anov)
 anov$uni.p
 anov$table
+write.csv(anov$table,'piptazo.csv')
+write.csv(anov$uni.p,'piptazouni.csv')
