@@ -188,36 +188,60 @@ out = out.loc[out["P value"].sort_values().index]
 out.to_csv("../bivariate/fisher.csv", index=None)
 out
 # %%
+def getqs(v):
+    vv = v.describe()
+    qs = ['50%','25%','75%']
+    vv = ['{: .1f}'.format(vv[i]) for i in qs]
+    return vv[0] + ' ['+vv[1]+','+vv[2]+']'
+# %%
 
 # fish 2
+meta['MM'] = 1-meta['M']
+vdict['MM'] = 'MMI < 0'
 
 cols = [
     'Variable',
-    '(+) & Death < 28 days',
-    '(-) & Death < 28 days',
-    'Odds ratio',
+    'Median[IQR] or n',
+    'Death < 28 days',
+    'Death > 28 days',
     'P value'
 ]
 groups = [j for j in cats if j not in outcomes]
+groups = ['Age','Gender','APACHE','ARDS','malignancy','immunosuppressed','diabetes','Sepsis3','Vancomycin','Ceftriaxone','Cipro','Zosyn',
+        'mmi','M','Shannon (D)','Chao1 (R)']
 out = pd.DataFrame(index=groups,columns=cols)
 for i in groups:
-    a = meta['month']
-    b = meta[i]
-    row = [
-           vdict.get(i),
-           (a+b == 2).astype(int).sum().astype(str),
-           a[b==0].sum().astype(int).astype(str),
-    ]
-    ctab = stats.contingency.crosstab(a,b)
-    teststat, pval = stats.fisher_exact(ctab[1])
-    row.append('{:.2g}'.format(teststat))
-    row.append('{:.2g}'.format(pval))
-    out.loc[i] = row
-out.index=out['Variable'].copy()
-del out['Variable']
+    if i in cats:
+        a = meta['month']
+        b = meta[i]
+        row = [
+            vdict.get(i),
+            (a+b == 2).astype(int).sum().astype(str),
+            a[b==0].sum().astype(int).astype(str),
+            a[b==0].sum().astype(int).astype(str),
+        ]
+        ctab = stats.contingency.crosstab(a,b)
+        teststat, pval = stats.fisher_exact(ctab[1])
+        row.append('{:.2g}'.format(pval))
+        out.loc[i] = row
+    else:
+        a = meta.loc[meta['month']==1,i]
+        b = meta.loc[meta['month']==0,i]
+        row = [
+            vdict.get(i),
+            getqs(meta[i]),
+            getqs(a),
+            getqs(b),
+        ]
+        teststat, pval = stats.ranksums(a,b,nan_policy='omit')
+        row.append('{:.2g}'.format(pval))
+        out.loc[i] = row
+
+#out.index=out['Variable'].copy()
+#del out['Variable']
 out
 
 # %%
-out.to_csv("../bivariate/fisher2.csv", index=None)
+out.to_csv("../bivariate/fisher3.csv", index=None)
 
 # %%

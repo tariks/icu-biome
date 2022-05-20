@@ -55,7 +55,8 @@ for f in l:
     )
 # %%
 d = pd.read_csv("../bivariate/pretty_fish_24days.csv", index_col=None)
-doctable(d, "Death < 24 days, Fisher's exact tests", "../docxtables/fish_24days.docx")
+d = pd.read_csv("../bivariate/fisher3.csv", index_col=None)
+doctable(d, "Death < 24 days, Fisher's exact tests", "../docxtables/fish_3.docx")
 # %%
 vdict = {
     "24days": "Death < 24 days",
