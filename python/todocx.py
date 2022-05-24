@@ -43,14 +43,16 @@ def doctable(data, tabletitle, pathfile):
 from glob import glob
 
 l = glob("../bivariate/pretty*")
+l = glob("../survival/pretty*")
 for f in l:
     name = f.split(".")[-2].split("pretty_")[1]
     s = name.split("_")
-    test, variable = tdict.get(s[0]), vdict.get(s[1])
+#    test, variable = tdict.get(s[0]), vdict.get(s[1])
     data = pd.read_csv(f, index_col=None)
     doctable(
         data,
-        "Comparisons with {}, {}".format(variable, test),
+        #"Comparisons with {}, {}".format(variable, test),
+        "Cox models",
         "../docxtables/{}.docx".format(name),
     )
 # %%

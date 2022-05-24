@@ -58,7 +58,7 @@ vdict["APACHE"] = "APACHE II score"
 vdict["Sepsis3"] = "Sepsis-3"
 vdict["Gender"] = "Gender (male)"
 vdict["Shock"] = "Septic shock"
-vdict = {v: k for k, v in vdict.items()}
+#vdict = {v: k for k, v in vdict.items()}
 # %%
 def parserank(csv="../bivariate/ranksums.csv", var="Death < 28 days"):
     table = pd.read_csv(csv, index_col=None)
@@ -211,4 +211,48 @@ x = parsespear(var="MMI")
 x
 # %%
 x.to_csv("../bivariate/pretty_spear_mmi.csv", index=None)
+# %%
+def parsecox(csv="../survival/bivariate.csv",):
+    table = pd.read_csv(csv, index_col=None)
+    cols = [
+        "Model",
+        "Model LL",
+        "Variable",
+        "Hazard ratio",
+        "HR 95% CI, lower",
+        "HR 95% CI, higher",
+        "P value",
+    ]
+    out = pd.DataFrame(columns=cols)
+    current_model=''
+    for i in table.index:
+        if '*' not in table.loc[i,'model']:
+            model = table.loc[i,'model'].split('+')
+            model = [vdict.get(i) for i in model]
+            for j in range(len(model)):
+                if ' ' in model[j]:
+                    model[j] = '('+model[j]+')'
+            model = ' + '.join(model)
+            if model == current_model:
+                m = ['..','..']
+            else:
+                m = [model,'{: .1f}'.format(table.loc[i,'model LL'])]
+                current_model = model
+            other = table.loc[i][-5:].to_list()
+            other[0]=vdict.get(other[0])
+            for j in range(1,4):
+                other[j] = '{:.1f}'.format(other[j])
+            other[-1] = '{:.2g}'.format(other[-1])
+            row = m+other
+            out.loc[len(out.index), cols] = row
+    return out
+# %%
+out = parsecox('../survival/quadvariate.csv')
+# %%
+out.iloc[:40,:]
+
+# %%
+out = out.iloc[:40,:]
+out.to_csv("../survival/pretty_quad.csv", index=None)
+
 # %%

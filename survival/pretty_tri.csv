@@ -1,0 +1,31 @@
+Model,Model LL,Variable,Hazard ratio,"HR 95% CI, lower","HR 95% CI, higher",P value
+(APACHE II score) + ARDS + MMI,-94.6,ARDS,1.8,0.9,3.4,0.075
+..,..,MMI,1.5,1.2,1.8,0.00059
+..,..,APACHE II score,1.1,1.0,1.1,0.0046
+(Gender (male)) + (APACHE II score) + MMI,-94.8,APACHE II score,1.1,1.0,1.1,0.0017
+..,..,Gender (male),0.6,0.3,1.1,0.082
+..,..,MMI,1.6,1.2,2.0,0.00012
+(APACHE II score) + ARDS + (MMI > 0),-95.2,APACHE II score,1.1,1.0,1.1,0.0094
+..,..,ARDS,1.9,1.0,3.6,0.062
+..,..,MMI > 0,2.5,1.4,4.7,0.0026
+(Gender (male)) + (APACHE II score) + (MMI > 0),-95.4,MMI > 0,2.9,1.6,5.3,0.00074
+..,..,APACHE II score,1.1,1.0,1.1,0.0013
+..,..,Gender (male),0.6,0.3,1.1,0.082
+Age + (APACHE II score) + MMI,-95.7,Age,1.0,1.0,1.0,0.47
+..,..,MMI,1.5,1.2,1.9,0.00038
+..,..,APACHE II score,1.1,1.0,1.1,0.0029
+(APACHE II score) + Sepsis-3 + MMI,-95.8,APACHE II score,1.1,1.0,1.1,0.0039
+..,..,Sepsis-3,0.8,0.4,1.8,0.65
+..,..,MMI,1.5,1.2,1.9,0.00039
+(APACHE II score) + Vancomycin + MMI,-95.8,APACHE II score,1.1,1.0,1.1,0.0047
+..,..,Vancomycin,1.1,0.6,2.3,0.7
+..,..,MMI,1.5,1.2,1.9,0.00082
+(APACHE II score) + Ciprofloxacin + MMI,-95.8,APACHE II score,1.1,1.0,1.1,0.004
+..,..,Ciprofloxacin,1.1,0.5,2.4,0.73
+..,..,MMI,1.5,1.2,1.9,0.00042
+(APACHE II score) + Immunosuppressed + MMI,-95.8,APACHE II score,1.1,1.0,1.1,0.0038
+..,..,Immunosuppressed,1.1,0.6,2.1,0.76
+..,..,MMI,1.5,1.2,1.9,0.00067
+(APACHE II score) + Malignancy + MMI,-95.9,MMI,1.5,1.2,1.9,0.00046
+..,..,Malignancy,1.0,1.0,1.0,0.98
+..,..,APACHE II score,1.1,1.0,1.1,0.0037
