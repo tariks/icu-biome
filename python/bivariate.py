@@ -214,11 +214,14 @@ for i in groups:
     if i in cats:
         a = meta['month']
         b = meta[i]
+        asum = b[a==1].sum().astype(int),
+        bsum = b[a==0].sum().astype(int),
+        tsum = b.sum().astype(int),
         row = [
             vdict.get(i),
-            (a+b == 2).astype(int).sum().astype(str),
-            a[b==0].sum().astype(int).astype(str),
-            a[b==0].sum().astype(int).astype(str),
+            '{} ({:.0%})'.format(tsum[0],tsum[0]/52),
+            '{} ({:.0%})'.format(asum[0],asum[0]/52),
+            '{} ({:.0%})'.format(bsum[0],bsum[0]/52),
         ]
         ctab = stats.contingency.crosstab(a,b)
         teststat, pval = stats.fisher_exact(ctab[1])
