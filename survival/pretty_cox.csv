@@ -1,0 +1,211 @@
+Model,Variable,Hazard ratio (95% CI),P value
+MMI,MMI," 1.4 (1.1, 1.7)",0.0017
+APACHE II score,APACHE II score," 1.1 (1, 1.1)",0.01
+MMI > 0,MMI > 0," 2.2 (1.1, 4.3)",0.017
+ARDS,ARDS," 2 (1, 4)",0.041
+Malignancy,Malignancy," 1.4 (0.74, 2.7)",0.29
+Gender (male),Gender (male)," 0.72 (0.37, 1.4)",0.32
+Vancomycin,Vancomycin," 1.4 (0.7, 2.7)",0.35
+Immunosuppressed,Immunosuppressed," 1.3 (0.65, 2.5)",0.48
+Piperacillin-tazobactam,Piperacillin-tazobactam," 1.2 (0.62, 2.5)",0.54
+Age,Age," 1 (0.98, 1)",0.67
+Ceftriaxone,Ceftriaxone," 0.86 (0.41, 1.8)",0.69
+Ciprofloxacin,Ciprofloxacin," 1.1 (0.53, 2.3)",0.78
+Sepsis-3,Sepsis-3," 1 (1, 1)",0.84
+Diabetes,Diabetes," 1.1 (0.53, 2.1)",0.87
+(APACHE II score) + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0037
+..,MMI,"1.5 (1.2, 1.9)",0.00046
+(APACHE II score) + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0033
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0029
+ARDS + MMI,MMI,"1.4 (1.1, 1.7)",0.0046
+..,ARDS,"1.9 (1.0, 3.8)",0.063
+ARDS + (MMI > 0),MMI > 0,"2.3 (1.2, 4.2)",0.01
+..,ARDS,"2.1 (1.1, 4.1)",0.035
+(APACHE II score) + ARDS,ARDS,"1.8 (1.0, 3.5)",0.066
+..,APACHE II score,"1.1 (1.0, 1.1)",0.034
+(Gender (male)) + MMI,Gender (male),"0.6 (0.3, 1.3)",0.2
+..,MMI,"1.4 (1.1, 1.8)",0.0015
+(Gender (male)) + (MMI > 0),MMI > 0,"2.4 (1.2, 4.6)",0.012
+..,Gender (male),"0.6 (0.3, 1.2)",0.19
+MMI + (MMI > 0),MMI,"1.3 (1.0, 1.7)",0.1
+..,MMI > 0,"1.5 (0.6, 3.5)",0.38
+Vancomycin + MMI,Vancomycin,"1.3 (0.6, 2.5)",0.48
+..,MMI,"1.4 (1.1, 1.7)",0.0028
+Malignancy + MMI,MMI,"1.4 (1.1, 1.7)",0.0036
+..,Malignancy,"1.3 (0.7, 2.5)",0.45
+Vancomycin + (MMI > 0),Vancomycin,"1.5 (0.8, 2.9)",0.24
+..,MMI > 0,"2.3 (1.2, 4.4)",0.01
+Ciprofloxacin + MMI,Ciprofloxacin,"1.2 (0.6, 2.5)",0.62
+..,MMI,"1.4 (1.1, 1.7)",0.0014
+Age + MMI,MMI,"1.4 (1.1, 1.7)",0.0014
+..,Age,"1.0 (1.0, 1.0)",0.65
+Immunosuppressed + MMI,MMI,"1.4 (1.1, 1.7)",0.0033
+..,Immunosuppressed,"1.1 (0.6, 2.2)",0.72
+Diabetes + MMI,Diabetes,"1.0 (1.0, 1.0)",0.85
+..,MMI,"1.4 (1.1, 1.7)",0.0017
+Ceftriaxone + MMI,Ceftriaxone,"1.0 (1.0, 1.0)",0.79
+..,MMI,"1.4 (1.1, 1.7)",0.0017
+Piperacillin-tazobactam + MMI,MMI,"1.4 (1.1, 1.7)",0.0017
+..,Piperacillin-tazobactam,"1.0 (1.0, 1.0)",0.82
+Sepsis-3 + MMI,Sepsis-3,"1.0 (1.0, 1.0)",0.85
+..,MMI,"1.4 (1.1, 1.7)",0.0017
+(APACHE II score) + ARDS + MMI,ARDS,"1.8 (0.9, 3.4)",0.075
+..,MMI,"1.5 (1.2, 1.8)",0.00059
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0046
+(Gender (male)) + (APACHE II score) + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0017
+..,Gender (male),"0.6 (0.3, 1.1)",0.082
+..,MMI,"1.6 (1.2, 2.0)",0.00012
+(APACHE II score) + ARDS + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0094
+..,ARDS,"1.9 (1.0, 3.6)",0.062
+..,MMI > 0,"2.5 (1.4, 4.7)",0.0026
+(Gender (male)) + (APACHE II score) + (MMI > 0),MMI > 0,"2.9 (1.6, 5.3)",0.00074
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0013
+..,Gender (male),"0.6 (0.3, 1.1)",0.082
+Age + (APACHE II score) + MMI,Age,"1.0 (1.0, 1.0)",0.47
+..,MMI,"1.5 (1.2, 1.9)",0.00038
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0029
+(APACHE II score) + Sepsis-3 + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0039
+..,Sepsis-3,"0.8 (0.4, 1.8)",0.65
+..,MMI,"1.5 (1.2, 1.9)",0.00039
+(APACHE II score) + Vancomycin + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0047
+..,Vancomycin,"1.1 (0.6, 2.3)",0.7
+..,MMI,"1.5 (1.2, 1.9)",0.00082
+(APACHE II score) + Ciprofloxacin + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.004
+..,Ciprofloxacin,"1.1 (0.5, 2.4)",0.73
+..,MMI,"1.5 (1.2, 1.9)",0.00042
+(APACHE II score) + Immunosuppressed + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0038
+..,Immunosuppressed,"1.1 (0.6, 2.1)",0.76
+..,MMI,"1.5 (1.2, 1.9)",0.00067
+(APACHE II score) + Malignancy + MMI,MMI,"1.5 (1.2, 1.9)",0.00046
+..,Malignancy,"1.0 (1.0, 1.0)",0.98
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0037
+(APACHE II score) + Diabetes + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0037
+..,MMI,"1.5 (1.2, 1.9)",0.00046
+..,Diabetes,"1.0 (1.0, 1.0)",0.86
+(APACHE II score) + Ceftriaxone + MMI,MMI,"1.5 (1.2, 1.9)",0.00046
+..,Ceftriaxone,"1.0 (1.0, 1.0)",0.96
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0037
+(APACHE II score) + Piperacillin-tazobactam + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0037
+..,MMI,"1.5 (1.2, 1.9)",0.00044
+..,Piperacillin-tazobactam,"1.0 (1.0, 1.0)",0.99
+(APACHE II score) + Vancomycin + (MMI > 0),MMI > 0,"2.6 (1.4, 4.6)",0.0019
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0048
+..,Vancomycin,"1.4 (0.7, 2.7)",0.37
+(Gender (male)) + ARDS + (MMI > 0),MMI > 0,"2.6 (1.4, 4.9)",0.0027
+..,Gender (male),"0.6 (0.3, 1.0)",0.067
+..,ARDS,"2.2 (1.2, 4.3)",0.016
+Age + (APACHE II score) + (MMI > 0),MMI > 0,"2.5 (1.4, 4.6)",0.0027
+..,Age,"1.0 (1.0, 1.0)",0.56
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0021
+(Gender (male)) + ARDS + MMI,MMI,"1.4 (1.1, 1.8)",0.0014
+..,Gender (male),"0.6 (0.3, 1.1)",0.11
+..,ARDS,"2.0 (1.0, 3.9)",0.04
+(APACHE II score) + Sepsis-3 + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0029
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0027
+..,Sepsis-3,"0.8 (0.4, 1.8)",0.66
+(APACHE II score) + Immunosuppressed + (MMI > 0),Immunosuppressed,"1.2 (0.6, 2.2)",0.65
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0029
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0027
+(APACHE II score) + Ciprofloxacin + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0049
+..,MMI > 0,"2.5 (1.4, 4.7)",0.0026
+..,Ciprofloxacin,"1.1 (0.5, 2.4)",0.86
+(APACHE II score) + Malignancy + (MMI > 0),Malignancy,"1.0 (1.0, 1.0)",0.94
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0029
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0033
+(APACHE II score) + Piperacillin-tazobactam + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0033
+..,Piperacillin-tazobactam,"1.0 (1.0, 1.0)",0.82
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0029
+(APACHE II score) + Ceftriaxone + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0033
+..,Ceftriaxone,"1.0 (1.0, 1.0)",0.83
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0029
+(APACHE II score) + Diabetes + (MMI > 0),Diabetes,"1.0 (1.0, 1.0)",0.88
+..,MMI > 0,"2.5 (1.4, 4.6)",0.0029
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0033
+(Gender (male)) + (APACHE II score) + ARDS + MMI,ARDS,"1.9 (1.0, 3.4)",0.04
+..,Gender (male),"0.5 (0.3, 1.0)",0.046
+..,MMI,"1.6 (1.3, 1.9)",5.8e-05
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0026
+(Gender (male)) + (APACHE II score) + ARDS + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0051
+..,ARDS,"2.0 (1.1, 3.7)",0.025
+..,Gender (male),"0.5 (0.3, 0.9)",0.028
+..,MMI > 0,"3.1 (1.7, 5.6)",0.00015
+(APACHE II score) + ARDS + Sepsis-3 + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0032
+..,MMI,"1.5 (1.2, 1.8)",0.00038
+..,Sepsis-3,"0.7 (0.3, 1.4)",0.28
+..,ARDS,"2.0 (1.0, 3.8)",0.045
+Age + (APACHE II score) + ARDS + MMI,ARDS,"1.8 (1.0, 3.4)",0.055
+..,MMI,"1.5 (1.2, 1.8)",0.0002
+..,Age,"1.0 (1.0, 1.0)",0.36
+..,APACHE II score,"1.1 (1.0, 1.1)",0.003
+(APACHE II score) + ARDS + Immunosuppressed + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0054
+..,ARDS,"1.8 (0.9, 3.4)",0.075
+..,Immunosuppressed,"1.0 (0.6, 2.0)",0.88
+..,MMI,"1.5 (1.2, 1.8)",0.00084
+(APACHE II score) + ARDS + Vancomycin + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0054
+..,ARDS,"1.8 (0.9, 3.4)",0.08
+..,MMI,"1.5 (1.2, 1.9)",0.001
+..,Vancomycin,"1.0 (0.5, 2.0)",0.97
+(APACHE II score) + ARDS + Malignancy + MMI,MMI,"1.5 (1.2, 1.8)",0.00059
+..,Malignancy,"1.0 (1.0, 1.0)",0.88
+..,ARDS,"1.8 (0.9, 3.4)",0.075
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0046
+(APACHE II score) + ARDS + Ciprofloxacin + MMI,MMI,"1.5 (1.2, 1.8)",0.00059
+..,Ciprofloxacin,"1.0 (1.0, 1.0)",0.85
+..,ARDS,"1.8 (0.9, 3.4)",0.075
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0046
+(APACHE II score) + ARDS + Diabetes + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0046
+..,ARDS,"1.8 (0.9, 3.4)",0.075
+..,Diabetes,"1.0 (1.0, 1.0)",0.91
+..,MMI,"1.5 (1.2, 1.8)",0.00059
+(APACHE II score) + ARDS + Ceftriaxone + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0046
+..,ARDS,"1.8 (0.9, 3.4)",0.075
+..,Ceftriaxone,"1.0 (1.0, 1.0)",0.93
+..,MMI,"1.5 (1.2, 1.8)",0.00059
+(APACHE II score) + ARDS + Piperacillin-tazobactam + MMI,ARDS,"1.8 (0.9, 3.4)",0.075
+..,MMI,"1.5 (1.2, 1.8)",0.00059
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0046
+..,Piperacillin-tazobactam,"1.0 (1.0, 1.0)",0.94
+Age + (Gender (male)) + (APACHE II score) + MMI,Age,"1.0 (1.0, 1.0)",0.62
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0015
+..,Gender (male),"0.6 (0.3, 1.1)",0.11
+..,MMI,"1.6 (1.2, 2.0)",0.00012
+(Gender (male)) + (APACHE II score) + Sepsis-3 + MMI,Sepsis-3,"0.8 (0.4, 1.8)",0.65
+..,Gender (male),"0.6 (0.3, 1.1)",0.081
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0023
+..,MMI,"1.6 (1.2, 2.0)",0.00011
+(Gender (male)) + (APACHE II score) + Ciprofloxacin + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0018
+..,MMI,"1.6 (1.2, 2.0)",0.00017
+..,Ciprofloxacin,"1.2 (0.6, 2.5)",0.63
+..,Gender (male),"0.6 (0.3, 1.1)",0.08
+(APACHE II score) + ARDS + Sepsis-3 + (MMI > 0),APACHE II score,"1.1 (1.0, 1.1)",0.0052
+..,ARDS,"2.1 (1.0, 4.0)",0.036
+..,Sepsis-3,"0.7 (0.3, 1.4)",0.27
+..,MMI > 0,"2.6 (1.4, 4.6)",0.0022
+(Gender (male)) + (APACHE II score) + Vancomycin + MMI,Vancomycin,"1.1 (0.5, 2.2)",0.82
+..,Gender (male),"0.6 (0.3, 1.1)",0.087
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0027
+..,MMI,"1.6 (1.2, 2.0)",0.00028
+(Gender (male)) + (APACHE II score) + Immunosuppressed + MMI,Immunosuppressed,"1.1 (0.6, 1.9)",0.86
+..,MMI,"1.6 (1.2, 2.0)",0.00014
+..,Gender (male),"0.6 (0.3, 1.1)",0.089
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0018
+(Gender (male)) + (APACHE II score) + Malignancy + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0017
+..,Gender (male),"0.6 (0.3, 1.1)",0.083
+..,Malignancy,"1.0 (1.0, 1.0)",0.91
+..,MMI,"1.6 (1.2, 2.0)",0.00012
+(Gender (male)) + (APACHE II score) + Piperacillin-tazobactam + MMI,MMI,"1.6 (1.2, 2.0)",0.00012
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0017
+..,Gender (male),"0.6 (0.3, 1.1)",0.083
+..,Piperacillin-tazobactam,"1.0 (1.0, 1.0)",0.77
+(Gender (male)) + (APACHE II score) + Diabetes + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0017
+..,Gender (male),"0.6 (0.3, 1.1)",0.083
+..,Diabetes,"1.0 (1.0, 1.0)",0.81
+..,MMI,"1.6 (1.2, 2.0)",0.00012
+(Gender (male)) + (APACHE II score) + Ceftriaxone + MMI,APACHE II score,"1.1 (1.0, 1.1)",0.0017
+..,Ceftriaxone,"1.0 (1.0, 1.0)",0.91
+..,MMI,"1.6 (1.2, 2.0)",0.00012
+..,Gender (male),"0.6 (0.3, 1.1)",0.083
+Age + (APACHE II score) + ARDS + (MMI > 0),Age,"1.0 (1.0, 1.0)",0.51
+..,ARDS,"1.9 (1.0, 3.5)",0.057
+..,MMI > 0,"2.6 (1.4, 4.7)",0.0022
+..,APACHE II score,"1.1 (1.0, 1.1)",0.0058

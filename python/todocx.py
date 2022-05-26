@@ -43,7 +43,7 @@ def doctable(data, tabletitle, pathfile):
 from glob import glob
 
 l = glob("../bivariate/pretty*")
-l = glob("../survival/pretty*")
+l = glob("../survival/pretty*ox*")
 for f in l:
     name = f.split(".")[-2].split("pretty_")[1]
     s = name.split("_")
