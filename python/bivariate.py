@@ -190,58 +190,70 @@ out
 # %%
 def getqs(v):
     vv = v.describe()
-    qs = ['50%','25%','75%']
-    vv = ['{: .1f}'.format(vv[i]) for i in qs]
-    return vv[0] + ' ['+vv[1]+','+vv[2]+']'
+    qs = ["50%", "25%", "75%"]
+    vv = ["{: .1f}".format(vv[i]) for i in qs]
+    return vv[0] + " [" + vv[1] + "," + vv[2] + "]"
+
+
 # %%
 
 # fish 2
-meta['MM'] = 1-meta['M']
-vdict['MM'] = 'MMI < 0'
+meta["MM"] = 1 - meta["M"]
+vdict["MM"] = "MMI < 0"
 
-cols = [
-    'Variable',
-    'Median[IQR] or n',
-    'Death < 28 days',
-    'Death > 28 days',
-    'P value'
-]
+cols = ["Variable", "Median[IQR] or n", "Death < 28 days", "Death > 28 days", "P value"]
 groups = [j for j in cats if j not in outcomes]
-groups = ['Age','Gender','APACHE','ARDS','malignancy','immunosuppressed','diabetes','Sepsis3','Vancomycin','Ceftriaxone','Cipro','Zosyn',
-        'mmi','M','Shannon (D)','Chao1 (R)']
-out = pd.DataFrame(index=groups,columns=cols)
+groups = [
+    "Age",
+    "Gender",
+    "APACHE",
+    "ARDS",
+    "malignancy",
+    "immunosuppressed",
+    "diabetes",
+    "Sepsis3",
+    "Vancomycin",
+    "Ceftriaxone",
+    "Cipro",
+    "Zosyn",
+    "mmi",
+    "M",
+    "Shannon (D)",
+    "Chao1 (R)",
+]
+out = pd.DataFrame(index=groups, columns=cols)
 for i in groups:
     if i in cats:
-        a = meta['month']
+        a = meta["month"]
         b = meta[i]
-        asum = b[a==1].sum().astype(int),
-        bsum = b[a==0].sum().astype(int),
-        tsum = b.sum().astype(int),
+        asum = (b[a == 1].sum().astype(int),)
+        bsum = (b[a == 0].sum().astype(int),)
+        tsum = (b.sum().astype(int),)
         row = [
             vdict.get(i),
-            '{} ({:.0%})'.format(tsum[0],tsum[0]/52),
-            '{} ({:.0%})'.format(asum[0],asum[0]/52),
-            '{} ({:.0%})'.format(bsum[0],bsum[0]/52),
+            "{} ({:.0%})".format(tsum[0], tsum[0] / 52),
+            "{} ({:.0%})".format(asum[0], asum[0] / 52),
+            "{} ({:.0%})".format(bsum[0], bsum[0] / 52),
         ]
-        ctab = stats.contingency.crosstab(a,b)
+        ctab = stats.contingency.crosstab(a, b)
         teststat, pval = stats.fisher_exact(ctab[1])
-        row.append('{:.2g}'.format(pval))
+        row.append("{:.2g}".format(pval))
         out.loc[i] = row
     else:
-        a = meta.loc[meta['month']==1,i]
-        b = meta.loc[meta['month']==0,i]
+        a = meta.loc[meta["month"] == 1, i]
+        b = meta.loc[meta["month"] == 0, i]
         row = [
             vdict.get(i),
             getqs(meta[i]),
             getqs(a),
             getqs(b),
         ]
-        teststat, pval = stats.ranksums(a,b,nan_policy='omit')
-        row.append('{:.2g}'.format(pval))
+        teststat, pval = stats.ranksums(a, b, nan_policy="omit")
+        row.append("{:.2g}".format(pval))
         out.loc[i] = row
 
-#out.index=out['Variable'].copy()
-#del out['Variable']
+# out.index=out['Variable'].copy()
+# del out['Variable']
 out
 
 # %%

@@ -47,16 +47,16 @@ l = glob("../survival/pretty*ox*")
 for f in l:
     name = f.split(".")[-2].split("pretty_")[1]
     s = name.split("_")
-#    test, variable = tdict.get(s[0]), vdict.get(s[1])
+    #    test, variable = tdict.get(s[0]), vdict.get(s[1])
     data = pd.read_csv(f, index_col=None)
     doctable(
         data,
-        #"Comparisons with {}, {}".format(variable, test),
+        # "Comparisons with {}, {}".format(variable, test),
         "Cox models",
         "../docxtables/{}.docx".format(name),
     )
 # %%
-#d = pd.read_csv("../bivariate/pretty_fish_24days.csv", index_col=None)
+# d = pd.read_csv("../bivariate/pretty_fish_24days.csv", index_col=None)
 d = pd.read_csv("../bivariate/fisher3.csv", index_col=None)
 doctable(d, "Bivariatem analysis", "../docxtables/fish_3.docx")
 # %%

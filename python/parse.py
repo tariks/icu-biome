@@ -58,7 +58,7 @@ vdict["APACHE"] = "APACHE II score"
 vdict["Sepsis3"] = "Sepsis-3"
 vdict["Gender"] = "Gender (male)"
 vdict["Shock"] = "Septic shock"
-#vdict = {v: k for k, v in vdict.items()}
+# vdict = {v: k for k, v in vdict.items()}
 # %%
 def parserank(csv="../bivariate/ranksums.csv", var="Death < 28 days"):
     table = pd.read_csv(csv, index_col=None)
@@ -212,7 +212,9 @@ x
 # %%
 x.to_csv("../bivariate/pretty_spear_mmi.csv", index=None)
 # %%
-def parsecox(csv="../survival/bivariate.csv",):
+def parsecox(
+    csv="../survival/bivariate.csv",
+):
     table = pd.read_csv(csv, index_col=None)
     cols = [
         "Model",
@@ -224,39 +226,43 @@ def parsecox(csv="../survival/bivariate.csv",):
         "P value",
     ]
     out = pd.DataFrame(columns=cols)
-    current_model=''
+    current_model = ""
     for i in table.index:
-        if '*' not in table.loc[i,'model']:
-            model = table.loc[i,'model'].split('+')
+        if "*" not in table.loc[i, "model"]:
+            model = table.loc[i, "model"].split("+")
             model = [vdict.get(i) for i in model]
             for j in range(len(model)):
-                if ' ' in model[j]:
-                    model[j] = '('+model[j]+')'
-            model = ' + '.join(model)
+                if " " in model[j]:
+                    model[j] = "(" + model[j] + ")"
+            model = " + ".join(model)
             if model == current_model:
-                m = ['..','..']
+                m = ["..", ".."]
             else:
-                m = [model,'{: .1f}'.format(table.loc[i,'model LL'])]
+                m = [model, "{: .1f}".format(table.loc[i, "model LL"])]
                 current_model = model
             other = table.loc[i][-5:].to_list()
-            other[0]=vdict.get(other[0])
-            for j in range(1,4):
-                other[j] = '{:.1f}'.format(other[j])
-            other[-1] = '{:.2g}'.format(other[-1])
-            row = m+other
+            other[0] = vdict.get(other[0])
+            for j in range(1, 4):
+                other[j] = "{:.1f}".format(other[j])
+            other[-1] = "{:.2g}".format(other[-1])
+            row = m + other
             out.loc[len(out.index), cols] = row
     return out
-# %%
-out = parsecox('../survival/quadvariate.csv')
-# %%
-out.iloc[:40,:]
+
 
 # %%
-out = out.iloc[:40,:]
+out = parsecox("../survival/quadvariate.csv")
+# %%
+out.iloc[:40, :]
+
+# %%
+out = out.iloc[:40, :]
 out.to_csv("../survival/pretty_quad.csv", index=None)
 
 # %%
-def parsecox(csv="../survival/bivariate.csv",):
+def parsecox(
+    csv="../survival/bivariate.csv",
+):
     table = pd.read_csv(csv, index_col=None)
     cols = [
         "Model",
@@ -265,53 +271,66 @@ def parsecox(csv="../survival/bivariate.csv",):
         "P value",
     ]
     out = pd.DataFrame(columns=cols)
-    current_model=''
+    current_model = ""
     for i in table.index:
-        if '*' not in table.loc[i,'model']:
-            model = table.loc[i,'model'].split('+')
+        if "*" not in table.loc[i, "model"]:
+            model = table.loc[i, "model"].split("+")
             model = [vdict.get(i) for i in model]
             for j in range(len(model)):
-                if ' ' in model[j]:
-                    model[j] = '('+model[j]+')'
-            model = ' + '.join(model)
+                if " " in model[j]:
+                    model[j] = "(" + model[j] + ")"
+            model = " + ".join(model)
             if model == current_model:
-                m = ['..']
+                m = [".."]
             else:
                 m = [model]
                 current_model = model
             other = table.loc[i][-5:].to_list()
-            other[0]=vdict.get(other[0])
-            for j in range(1,4):
-                other[j] = '{:.1f}'.format(other[j])
-            other[-1] = '{:.2g}'.format(other[-1])
-            other = [other[0]]+['{} ({}, {})'.format(other[1],other[2],other[3])]+[other[-1]]
-            row = m+other
+            other[0] = vdict.get(other[0])
+            for j in range(1, 4):
+                other[j] = "{:.1f}".format(other[j])
+            other[-1] = "{:.2g}".format(other[-1])
+            other = (
+                [other[0]]
+                + ["{} ({}, {})".format(other[1], other[2], other[3])]
+                + [other[-1]]
+            )
+            row = m + other
             out.loc[len(out.index), cols] = row
     return out
+
+
 # %%
 
-x4 = parsecox('../survival/quadvariate.csv')
-x2 = parsecox('../survival/bivariate.csv')
-x3 = parsecox('../survival/trivariate.csv')
-#x1 = parsecox('../survival/univariate.csv')
+x4 = parsecox("../survival/quadvariate.csv")
+x2 = parsecox("../survival/bivariate.csv")
+x3 = parsecox("../survival/trivariate.csv")
+# x1 = parsecox('../survival/univariate.csv')
 
 x2
 # %%
-x=pd.read_csv('../survival/univariate.csv',index_col=0)
+x = pd.read_csv("../survival/univariate.csv", index_col=0)
 x
 
 # %%
-x['Model'] = [vdict.get(i) for i in x.index]
-x['Variable'] = [vdict.get(i) for i in x.index]
-x['Hazard ratio (95% CI)'] = ['{: .2g} ({:.2g},{: .2g})'.format(x.loc[i,'exp(coef)'],x.loc[i,'exp(coef) lower 95%'],x.loc[i,'exp(coef) upper 95%']) for i in x.index]
-x['P value'] = ['{:.2g}'.format(x.loc[i,'p']) for i in x.index]
-x = x[['Model','Variable','Hazard ratio (95% CI)','P value']]
+x["Model"] = [vdict.get(i) for i in x.index]
+x["Variable"] = [vdict.get(i) for i in x.index]
+x["Hazard ratio (95% CI)"] = [
+    "{: .2g} ({:.2g},{: .2g})".format(
+        x.loc[i, "exp(coef)"],
+        x.loc[i, "exp(coef) lower 95%"],
+        x.loc[i, "exp(coef) upper 95%"],
+    )
+    for i in x.index
+]
+x["P value"] = ["{:.2g}".format(x.loc[i, "p"]) for i in x.index]
+x = x[["Model", "Variable", "Hazard ratio (95% CI)", "P value"]]
 x
 
 # %%
-x = x.append(x2,ignore_index=True)
-x = x.append(x3,ignore_index=True)
-x = x.append(x4,ignore_index=True)
+x = x.append(x2, ignore_index=True)
+x = x.append(x3, ignore_index=True)
+x = x.append(x4, ignore_index=True)
 x
 
 # %%
