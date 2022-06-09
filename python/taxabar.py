@@ -1,25 +1,12 @@
 # %%
-
+%matplotlib inline
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import proplot as pplt
-
-pplt.rc.fontsize = 7
-pplt.rc["tick.labelsize"] = 7
-pplt.rc["grid.linestyle"] = ":"
-pplt.rc["label.size"] = 7
-# pplt.rc['cmap.robust'] = True
-pplt.rc.textcolor = "#121212"
-pplt.rc.cycle = "Set1"
-pplt.rc.titlepad = 9
-pplt.rc["meta.width"] = 0.6
-pplt.rc["axes.facecolor"] = "#ffffff"
-pplt.rc["text.antialiased"] = True
-pplt.rc["lines.antialiased"] = True
-
-# pplt.rc.fontfamily='TeX Gyre Heros'
-pplt.rc.fontfamily = "Source Sans Pro"
+# %%
+pplt.rc.load('../plots/.proplotrc')
+pplt.config_inline_backend('retina')
+pplt.rc.fontfamily = "Arial"
 # %%
 gpac = [
     "Anaerococcus",
@@ -51,11 +38,24 @@ mypal = [
     (0.953, 0.800, 0.404, 1.000),
     (0.922, 0.655, 0.329, 1.000),
 ]
-# mypal = sns.color_palette(mypal,desat=1)
+mypal = [
+'#b6dbff', # lighter blue
+'#6db6ff', # light blue
+'#009292', # teal
+'#006edb', # blue
+#'#004949', # dark teal
+'#db6d00', # orange
+'#924900', # brown
+'#920000', # blood red
+'#ffff6d', # soft yellow
+'#ffb6db', # salmon
+'#ff6db6', # hot pink
+'#b66dff', # light purple
+'#490092', # violet
+]
+#mypal = sns.color_palette(mypal,desat=1)
+#mypal
 # %%
-%matplotlib inline
-pplt.config_inline_backend()
-# plt.style.use("../lance.txt")
 meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
 taxmap = pd.read_csv("../feature_tables/taxmap.csv", index_col=0, header=None)
 phygen = {
@@ -128,28 +128,33 @@ x = np.arange(1, len(low) + 1).tolist() + np.arange(len(low) + 3, 55).tolist()
 # genus=genus.loc[meta['mbal2'].sort_values().index]
 
 # %%
+z=-.03
+
 
 fig, ax = pplt.subplot(
     xlim=(0.5, 51.5),
-    journal="pnas2",
+#    journal="pnas2",
+    figwidth='13cm',
     fontsize=7,
     labelsize=7,
     ticklabelsize=7,
     tickminor=False,
     xticks="none",
     xtickloc="none",
+    xloc=('data',z),
+    refaspect=2.1,
 )
-
 
 ax.bar(
     x=np.arange(52)+1,
     height=genus.values,
     width=1,
     stack=True,
-    # cycle='hawaii',
-    cycle="twilight_r",
-    cycle_kw={"N": 13, 'shift': -1},
-    ec="#101010",
+    cycle=pplt.Cycle(mypal[::-1]),
+#    cycle="twilight_r",
+#    cycle_kw={"N": 13, 'shift': -1},
+    ec="#b9b9b9",
+#    ec="#101010",
     lw=.25,
     labels=genus.columns,
     edgefix=True,
@@ -167,7 +172,7 @@ ax.format(
 )
 
 ax.axhline(
-    y=0,
+    y=z,
     xmin=0,
     xmax=21.5/52,
     lw=2,
@@ -176,7 +181,7 @@ ax.axhline(
     clip_on=False,
 )
 ax.axhline(
-    y=0,
+    y=z,
     xmin=21.5/52,
     xmax=1,
     lw=2,
@@ -185,15 +190,16 @@ ax.axhline(
     clip_on=False,
 )
 
-ax.text(x=11, y=-0.03, s="MMI < 0", ha="center", va="top", transform="data")
-ax.text(x=52.5-15.5, y=-0.03, s="MMI > 0", ha="center", va="top", transform="data")
+ax.text(x=11, y=z-0.03, s="MMI < 0", ha="center", va="top", transform="data")
+ax.text(x=52.5-15.5, y=z-0.03, s="MMI > 0", ha="center", va="top", transform="data")
 
 # leg=ax.legend(loc='right',ncols=1,fontsize=7,frame=False)
 h, l = ax.get_legend_handles_labels()
 h, l = h[::-1], l[::-1]
 # leg.remove()
 leg = ax.legend(h, l, loc="right", ncols=1, fontsize=7, frame=False)
-fig.set_figheight(2)
+#fig.set_figheight(2)
+
 print(fig.get_figheight(), fig.get_figwidth())
 
 # %%
@@ -201,7 +207,7 @@ print(fig.get_figheight(), fig.get_figwidth())
 
 
 # plt.savefig('../plots/taxabars80.pdf',dpi=300,transparent=True,bbox_inches='tight')
-fig.savefig("../plots/taxabars80.pdf", dpi=600, transparent=False, bbox_inches="tight")
+fig.savefig("../plots/taxabars80.pdf", dpi=1000, transparent=True, bbox_inches="tight")
 
 
 # %%

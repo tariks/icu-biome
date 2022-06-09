@@ -5,25 +5,12 @@ import numpy as np
 import pandas as pd
 import lifelines
 
-pplt.rc.fontsize = 7
-pplt.rc["tick.labelsize"] = 7
-pplt.rc["grid.linestyle"] = ":"
-pplt.rc["label.size"] = 7
-pplt.rc["cmap.robust"] = True
-pplt.rc.textcolor = "#121212"
-pplt.rc.cycle = "Set1"
-pplt.rc.titlepad = 9
-pplt.rc["meta.width"] = 0.6
-pplt.rc["axes.facecolor"] = "#ffffff"
+# %%
+pplt.rc.load('../plots/.proplotrc')
+pplt.config_inline_backend('retina')
+pplt.rc.fontfamily = "Arial"
 pplt.rc["text.antialiased"] = True
 pplt.rc["lines.antialiased"] = True
-
-# pplt.rc.fontfamily='TeX Gyre Heros'
-pplt.rc.fontfamily = "Source Sans Pro"
-# pplt.rc.fontfamily='Noto Sans'
-# pplt.rc.fontfamily='Fira Sans'
-# %%
-pplt.config_inline_backend()
 # %%
 def sigstar(n):
     x = int(-np.log10(n))
@@ -39,8 +26,7 @@ vdict = {v: k for k, v in vdict_r.items()}
 # %%
 kparam = dict(ci_show=False, xlabel="", yticks=[], aa=True)
 kparam = dict(
-    ci_show=True,
-    ci_alpha=0.08,
+    ci_show=False,
     xlabel="",
     grid=True,
     aa=True,
@@ -53,13 +39,19 @@ def plotkm2(ax, v="M"):
     b = meta.loc[meta[v] == 0]
     km = lifelines.KaplanMeierFitter(alpha=0.1)
     km.fit(a["Death"], a["month"])
-    km.plot(**kparam, ax=ax, label="{} (n={})".format(vdict[v], a.shape[0]))
+    km.plot(**kparam, ax=ax, label=vdict[v], )
     km.fit(b["Death"], b["month"])
     km.plot(
         **kparam,
         ax=ax,
-        label="{} (n={})".format(str(vdict[v]).replace(">", "<"), b.shape[0])
+        label=vdict[v].replace(">", "<"),
+        legend=False,
     )
+    for i in [0,10,20,30]:
+        asum=(a['Death']>i).sum()
+        bsum=(b['Death']>i).sum()
+        ax.text(i,.21,str(asum),ha='center',color="#9F1800")
+        ax.text(i,.26,str(bsum),ha='center',color="blue")
 
 
 # %%
@@ -94,14 +86,15 @@ yticks.remove(17)
 fig, axs = pplt.subplots(
     nrows=1,
     ncols=2,
-    journal="ams3",
+    figwidth='13cm',
     share=False,
     fontsize=7,
     labelsize=7,
     ticklabelsize=7,
+    gridalpha=.6,
+    gridstyle=':'
 )
 fig.format(
-    fontfamily="TeX Gyre Heros",
     linewidth=0.6,
     yticks=pplt.Locator("null"),
     yticklen=0,
@@ -141,24 +134,18 @@ ylim[1] += 1
 ax.format(
     xlim=(-0, 4.5),
     grid=False,
+    xloc=("axes", -0.06),
     ylim=ylim,
+    xlabel="Hazard ratio",
     title="Univariate Cox analysis",
     titleloc="left",
     yloc="none",
 )
 
 
-twin = ax.twiny(
-    xloc=("axes", -0.05),
-    xcolor="#9F1800",
-    xlabel="Hazard ratio",
-)
-twin.format(
-    xlim=ax.get_xlim(),
-)
 
 
-panel = ax.panel("left", width=1.3, space=0)
+panel = ax.panel("left", width=1.3, space='2em')
 
 for i, v in enumerate(x.index):
     sigs = ""
@@ -175,7 +162,7 @@ for i, v in enumerate(x.index):
         )  # ,fontsize=7)
     else:
         panel.text(
-            0.3, yticks[i], s=str(v) + sigs, va="center", ha="left"
+            0.27, yticks[i], s=str(v) + sigs, va="center", ha="left"
         )  # ,fontsize=7)
 
 panel.format(
@@ -198,14 +185,9 @@ panel.text(0, 12.3, s="Clinical variables", **tparam)
 panel.text(0, 16.3, s="Demographic variables", **tparam)
 
 ax = axs[0, 1]
-ax.twinx(
-    yloc=("axes", -0.05),
-    yformatter="{x:.0%}",
-    labelsize=7,
-    fontsize=7,
-    ticklabelsize=7,
-)
+
 ax.format(
+    yloc=("axes", -0.08),
     ylim=(0.2, 1),
     xlim=(0, 40),
     yticks="auto",
@@ -213,17 +195,14 @@ ax.format(
     fontsize=7,
     labelsize=7,
     ticklabelsize=7,
-    xloc="none",
-    yloc="none",
+    xloc=("axes", -0.06),
     xlabel="",
     lw=0.6,
     grid=True,
     title="Kaplan-Meier curves",
     ylabel="Survivorship",
-    ylabelpad=30,
 )
 ax.twiny(
-    xloc=("axes", -0.05),
     # xcolor="crimson",
     xlabel="Days after ICU admission",
     xlim=ax.get_xlim(),
@@ -233,9 +212,10 @@ h, l = ax.get_legend_handles_labels()
 leg = ax.legend(
     h,
     l,
+    loc='upper right',
     ncols=1,
     fontsize=7,
-    frame=False,
+    frameon=False,
 )
 print(fig.get_figwidth(), fig.get_figheight())
 for t in ax.texts:
@@ -247,7 +227,7 @@ for i in ax.lines:
 # drawmedian(ax,)
 
 # %%
-fig.savefig("../plots/forest.pdf", dpi=600, transparent=False, bbox_inches="tight")
+fig.savefig("../plots/forest.pdf", dpi=1000, transparent=True, bbox_inches="tight")
 # %%
 """
 nat1 = 3.5 1.55
