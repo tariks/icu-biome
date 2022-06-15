@@ -6,7 +6,6 @@ import proplot as pplt
 # %%
 pplt.rc.load('../plots/.proplotrc')
 pplt.config_inline_backend('retina')
-pplt.rc.fontfamily = "Arial"
 # %%
 gpac = [
     "Anaerococcus",
@@ -110,7 +109,7 @@ genus = genus.loc[order]
 
 params = dict(
     width=1,
-    lw=0.25,
+    lw=0.3,
     #        ec='#292929',
     snap=True,
     aa=True,
@@ -120,7 +119,6 @@ params = dict(
 h = np.zeros(52)
 mthres = 0.0
 
-# fig.set(figheight=2.5,figwidth=4)
 low = [i for i in genus.index if meta.loc[i, "mmi"] < mthres]
 high = [i for i in genus.index if meta.loc[i, "mmi"] > mthres]
 genus = genus.loc[low + high]
@@ -128,21 +126,22 @@ x = np.arange(1, len(low) + 1).tolist() + np.arange(len(low) + 3, 55).tolist()
 # genus=genus.loc[meta['mbal2'].sort_values().index]
 
 # %%
-z=-.03
+z=-.02
 
 
 fig, ax = pplt.subplot(
     xlim=(0.5, 51.5),
-#    journal="pnas2",
-    figwidth='13cm',
-    fontsize=7,
-    labelsize=7,
-    ticklabelsize=7,
-    tickminor=False,
+    #figwidth="17.4cm",
+    figwidth="8.4cm",
+    right=None,
+    left=None,
     xticks="none",
+    xminorticks="none",
+    yminorticks="none",
     xtickloc="none",
     xloc=('data',z),
-    refaspect=2.1,
+    refaspect=1.75,
+    yloc=('data',-.25)
 )
 
 ax.bar(
@@ -151,54 +150,51 @@ ax.bar(
     width=1,
     stack=True,
     cycle=pplt.Cycle(mypal[::-1]),
-#    cycle="twilight_r",
-#    cycle_kw={"N": 13, 'shift': -1},
-    ec="#b9b9b9",
-#    ec="#101010",
-    lw=.25,
+    ec="#c9c9c9",
+    lw=.3,
     labels=genus.columns,
     edgefix=True,
     snap=True,
     alpha=.9,
 )
 ax.format(
-    fontsize=7,
+    fontsize=5,
     xloc="none",
+    xticks=[],
     yloc="left",
     yformatter="{x:.0%}",
-    linewidth=0,
-    ytickwidth=0.5,
-    yticklen=0.3,
+    ylim=(0,1),
 )
-
+hparam=dict(
+    lw=2,
+    solid_capstyle="butt",
+    clip_on=False,
+    snap=True,
+)
 ax.axhline(
     y=z,
     xmin=0,
     xmax=21.5/52,
-    lw=2,
-    color="#176AD4",
-    solid_capstyle="butt",
-    clip_on=False,
+    color="#1770B8",
+    **hparam
 )
 ax.axhline(
     y=z,
     xmin=21.5/52,
     xmax=1,
-    lw=2,
-    color="#B71D14",
-    solid_capstyle="butt",
-    clip_on=False,
+    color="#B81720",
+    **hparam,
 )
 
 ax.text(x=11, y=z-0.03, s="MMI < 0", ha="center", va="top", transform="data")
 ax.text(x=52.5-15.5, y=z-0.03, s="MMI > 0", ha="center", va="top", transform="data")
-
-# leg=ax.legend(loc='right',ncols=1,fontsize=7,frame=False)
+ax.margins(0)
 h, l = ax.get_legend_handles_labels()
 h, l = h[::-1], l[::-1]
-# leg.remove()
-leg = ax.legend(h, l, loc="right", ncols=1, fontsize=7, frame=False)
-#fig.set_figheight(2)
+leg = ax.legend(h, l, loc="lower left", bbox_to_anchor=(52,0), bbox_transform=ax.transData, ncols=1,
+        fontsize=5,frameon=False)
+for i in leg.get_patches():
+    i.set(lw=0)
 
 print(fig.get_figheight(), fig.get_figwidth())
 
@@ -207,7 +203,7 @@ print(fig.get_figheight(), fig.get_figwidth())
 
 
 # plt.savefig('../plots/taxabars80.pdf',dpi=300,transparent=True,bbox_inches='tight')
-fig.savefig("../plots/taxabars80.pdf", dpi=1000, transparent=True, bbox_inches="tight")
+fig.savefig("../plots/taxabars_87mm.pdf", dpi=1200, transparent=True,)
 
 
 # %%

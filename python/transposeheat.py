@@ -9,9 +9,6 @@ from scipy.cluster.hierarchy import leaves_list, linkage
 # %%
 pplt.rc.load('../plots/.proplotrc')
 pplt.config_inline_backend('retina')
-pplt.rc.fontfamily = "Arial"
-pplt.rc["text.antialiased"] = True
-pplt.rc["lines.antialiased"] = True
 gpac = [
     "Anaerococcus",
     "Fenollaria",
@@ -67,18 +64,17 @@ x.columns=cols
 
 # %%
 fig, ax = pplt.subplot(
-    # journal="aaas2",
     tickminor=False,
     grid=False,
     yloc= ('axes',-.01),
     xloc="none",
     linewidth=0,
     xticklabels=[],
-    left='1em',
-    right='1em',
-    figwidth='11cm',
+    left=None,
+    right=None,
+    figwidth='8.4cm',
     refaspect=4.75,
-    labelpad=.5,
+    ylabelpad=.15,
 #    figheight=2.6,
 )
 cols = [
@@ -93,10 +89,11 @@ corr = x.corr(method="spearman").loc[x.columns[:-1], cols]
 
 cbk = {
     "ticklabels": "{x: .1f}",
-    "space": '.25em',
+    "space": '.2em',
     "length": .7,
-    'width': .1,
+    #'width': .1,
     'c': 'w',
+    'align': 'right',
     'lw': .75,
 }
 for i in cols[:2]+cols[-2:]:
@@ -124,10 +121,10 @@ heat = ax.heatmap(
     levels=9,
 #    symmetric=True,
 )
-ax.vlines(x=np.arange(-.5,31,1),y1=-.5,y2=4.5,lw=.6,ec='#ffffff',snap=True,alpha=1)
-ax.hlines(y=[-.5,1.5,2.5,4.5],x1=-.5,x2=30.5,lw=6,color='#ffffff',snap=True)
-ax.hlines(y=[1.5,2.5],x1=-.47,x2=30.47,lw=.75,color='#000000',snap=True,capstyle='butt',ls=(0,(5,5)))
-ax.hlines(y=[.5,3.5],x1=-.5,x2=30.5,lw=1.5,color='#ffffff',snap=True,alpha=1)
+ax.vlines(x=np.arange(-.5,31,1),y1=-.5,y2=4.5,lw=.5,ec='#ffffff',snap=True,alpha=1)
+ax.hlines(y=[-.5,1.5,2.5,4.5],x1=-.5,x2=30.5,lw=3,color='#ffffff',snap=True)
+ax.hlines(y=[1.5,2.5],x1=-.47,x2=30.47,lw=.5,color='#000000',snap=True,capstyle='butt',ls=(0,(5,5)))
+ax.hlines(y=[.5,3.5],x1=-.5,x2=30.5,lw=.75,color='#ffffff',snap=True,alpha=1)
 labs = [i.replace('[','').replace(']','').replace(' group','') for i in corr.index[order]]
 for j,i in enumerate(labs):
     c='#121212'
@@ -135,20 +132,19 @@ for j,i in enumerate(labs):
         c='blueviolet'
     if i in gpac:
         c='orangered'
-    ax.text(j-.3,4.425,i,c=c,va='bottom',ha='left',rotation=70,fontsize=7)
+    ax.text(j-.35,4.42,i,c=c,va='bottom',ha='left',rotation=75,fontsize=5,fontstyle='italic')
 #ax.text(.5,30.75,'Numerator',ha='center',va='bottom',fontsize=6.5)
 #ax.text(3.5,30.75,'Denominator',ha='center',va='bottom',fontsize=6.5)
 
 #fig.set(figheight=2.6,figwidth='14cm')
 
 #ax.invert_yaxis()
-ax.format(xrotation=0)
+ax.format(xrotation=0,ylabelpad=0)
 print(fig.get_figheight(),fig.get_figwidth())
 fig.savefig(
-    "../plots/taxaheatmap.pdf",
-    dpi=1000,
+    "../plots/taxaheatmap_87mm.pdf",
+    dpi=1200,
     transparent=True,
-    bbox_inches='tight'
 )
 
 

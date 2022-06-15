@@ -8,9 +8,7 @@ import lifelines
 # %%
 pplt.rc.load('../plots/.proplotrc')
 pplt.config_inline_backend('retina')
-pplt.rc.fontfamily = "Arial"
-pplt.rc["text.antialiased"] = True
-pplt.rc["lines.antialiased"] = True
+red,blue = '#C91923','#0C385C'
 # %%
 def sigstar(n):
     x = int(-np.log10(n))
@@ -24,34 +22,26 @@ vdict_r = {vdict.loc[i, 1]: i for i in vdict.index}
 vdict = {v: k for k, v in vdict_r.items()}
 
 # %%
-kparam = dict(ci_show=False, xlabel="", yticks=[], aa=True)
 kparam = dict(
-    ci_show=False,
-    xlabel="",
-    grid=True,
-    aa=True,
-    lw=1.2,
+    lw=.8,
+    drawstyle='steps-post',
+    solid_capstyle='butt',
+    solid_joinstyle='round',
+    snap=True,
+    autoformat=False,
 )
 
 
-def plotkm2(ax, v="M"):
-    a = meta.loc[meta[v] == 1]
-    b = meta.loc[meta[v] == 0]
+def plotkm2(ax, v, c="#999999",ls='-', label='Cohort (n=52)',offset=.01):
+    a = meta.loc[v]
     km = lifelines.KaplanMeierFitter(alpha=0.1)
     km.fit(a["Death"], a["month"])
-    km.plot(**kparam, ax=ax, label=vdict[v], )
-    km.fit(b["Death"], b["month"])
-    km.plot(
-        **kparam,
-        ax=ax,
-        label=vdict[v].replace(">", "<"),
-        legend=False,
-    )
-    for i in [0,10,20,30]:
-        asum=(a['Death']>i).sum()
-        bsum=(b['Death']>i).sum()
-        ax.text(i,.21,str(asum),ha='center',color="#9F1800")
-        ax.text(i,.26,str(bsum),ha='center',color="blue")
+    b = km.survival_function_.values.reshape(1,-1)[0]
+    ax.line(x=km.survival_function_.index,y=b, label=label, c=c, ls=ls, **kparam)
+    if c!='#999999':
+        for i in [0,10,20,30,]:
+            asum=(a['Death']>i).sum()
+            ax.text(i,.2+offset,str(asum),ha='center',color=c)
 
 
 # %%
@@ -67,7 +57,7 @@ idx += [
     "APACHE II score",
 ]
 idx += [
-    "Gender (male)",
+    "Sex (male)",
     "Age",
 ]
 idx += ["MMI > 0", "MMI"]
@@ -86,66 +76,79 @@ yticks.remove(17)
 fig, axs = pplt.subplots(
     nrows=1,
     ncols=2,
-    figwidth='13cm',
+    figwidth='8.4cm',
     share=False,
-    fontsize=7,
-    labelsize=7,
-    ticklabelsize=7,
-    gridalpha=.6,
-    gridstyle=':'
-)
-fig.format(
-    linewidth=0.6,
-    yticks=pplt.Locator("null"),
+    gridalpha=.5,
+    gridcolor='#dddddd',
+    gridstyle='-', #(0,(1,5)),
+    gridlinewidth=.3,
+    left=None,
+    right=None,
+    yticks=None,
     yticklen=0,
-    xloc="none",
-    yloc="left",
+    labelpad='.25em',
+    xloc=('axes',-.025),
+    yloc='left',
+    refaspect=.73,
+    wpad='-.6em',
+    xminorlocator='minor',
+    yminorlocator='minor',
+    xminorlocator_kw={'n': 2},
+    yminorlocator_kw={'n': 2},
+
 )
-fig.set(
-    figheight=2.75,
-)
-ax = axs[0, 0]
+ax = axs[0]
+x['z']=1
+blues=(x["exp(coef) lower 95%"]<1)
+reds=(x["exp(coef) upper 95%"]>1)
+lparam=dict(snap=True,lw=.75,alpha=.9,capstyle='round')
+yticks=np.array(yticks)
 ax.hlines(
-    x1=x["exp(coef) lower 95%"],
-    x2=x["exp(coef) upper 95%"],
-    y=yticks,
+    x1=x.loc[blues,"exp(coef) lower 95%"].values,
+    x2=x.loc[blues,'z'].values,
+    y=yticks[blues.values],
     color="#121212",
-    snap=True,
-    aa=True,
-    lw=1,
-    alpha=0.5,
+    **lparam,
+
 )
-ax.axvline(1, color="#121212", snap=True, aa=True, lw=0.6, alpha=0.6)
+ax.hlines(
+    x1=x.loc[reds,'z'].values,
+    x2=x.loc[reds,"exp(coef) upper 95%"].values,
+    y=yticks[reds.values],
+    color="#121212",
+    **lparam,
+)
+ax.axvline(1, color="#121212", snap=True, alpha=0.6, lw=.6,solid_capstyle='round')
 ax.scatterx(
     x=x["exp(coef)"],
     y=yticks,
-    c="#333333",
-    s=22,
+    c="#909090",
+    s=12,
     marker="D",
     snap=True,
-    aa=True,
-    alpha=0.5,
+    alpha=0.9,
     mew=0,
 )
 ylim = list(ax.get_ylim())
-ylim[1] += 1
+ylim[1] += .0
 
 
 ax.format(
     xlim=(-0, 4.5),
     grid=False,
-    xloc=("axes", -0.06),
     ylim=ylim,
     xlabel="Hazard ratio",
-    title="Univariate Cox analysis",
+    #title="Univariate Cox analysis",
     titleloc="left",
     yloc="none",
+    xticks=[0,1,2,3,4],
 )
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 
-panel = ax.panel("left", width=1.3, space='2em')
+panel = ax.panel("left", share=True, pad='-1.1em')
 
 for i, v in enumerate(x.index):
     sigs = ""
@@ -154,20 +157,18 @@ for i, v in enumerate(x.index):
     tmp = vdict_r[v]
     if meta[tmp].max() == 1:
         panel.text(
-            0.25,
+            0.16,
             yticks[i],
-            s="  (n={}) ".format(meta[tmp].sum().astype(int)) + str(v) + sigs,
+            s="(n={}) ".format(meta[tmp].sum().astype(int)) + str(v) + sigs,
             va="center",
             ha="left",
         )  # ,fontsize=7)
     else:
         panel.text(
-            0.27, yticks[i], s=str(v) + sigs, va="center", ha="left"
+            0.16, yticks[i], s=str(v) + sigs, va="center", ha="left"
         )  # ,fontsize=7)
 
 panel.format(
-    yticklabels=pplt.Formatter("null"),
-    yticklen=0,
     xlim=(-0.02, 2),
     ylim=ax.get_ylim(),
     grid=False,
@@ -175,59 +176,53 @@ panel.format(
     yloc="none",
 )
 tparam = dict(
-    weight="demi",
+    #weight="demi",
+    fontstyle='italic',
     ha="left",
     va="center",
 )
-panel.text(0, 20.3, s="Microbiome variables", **tparam)
-panel.text(0, 4.3, s="Antibacterials", **tparam)
-panel.text(0, 12.3, s="Clinical variables", **tparam)
-panel.text(0, 16.3, s="Demographic variables", **tparam)
+panel.text(0, 20.375, s="Microbiome", **tparam)
+panel.text(0, 4.375, s="Antibacterials", **tparam)
+panel.text(0, 12.375, s="Comorbidities", **tparam)
+panel.text(0, 16.375, s="Demographics", **tparam)
 
-ax = axs[0, 1]
+ax = axs[1]
 
 ax.format(
-    yloc=("axes", -0.08),
-    ylim=(0.2, 1),
-    xlim=(0, 40),
-    yticks="auto",
+    yloc=("axes", -0.07),
+    ylim=(0.2, 1.005),
+    xlim=(0, 35),
+    yticks=np.array([.2,.4,.6,.8,1]),
+    ticklen=2,
     yformatter="{x:.0%}",
-    fontsize=7,
-    labelsize=7,
-    ticklabelsize=7,
-    xloc=("axes", -0.06),
-    xlabel="",
-    lw=0.6,
+    xlabel="Days from admission",
     grid=True,
-    title="Kaplan-Meier curves",
-    ylabel="Survivorship",
-)
-ax.twiny(
-    # xcolor="crimson",
-    xlabel="Days after ICU admission",
-    xlim=ax.get_xlim(),
-)
-plotkm2(ax=ax)
-h, l = ax.get_legend_handles_labels()
-leg = ax.legend(
-    h,
-    l,
-    loc='upper right',
-    ncols=1,
-    fontsize=7,
-    frameon=False,
-)
-print(fig.get_figwidth(), fig.get_figheight())
-for t in ax.texts:
-    if "time" in t.get_text():
-        t.remove()
-for i in ax.lines:
-    i.set(lw=1, snap=True, aa=True)
+    #title="Kaplan-Meier curves",
+    ylabel="Survival",
+    ylabelpad=.2,
+    yticklabelpad=.2,
+    xticks=[0,10,20,30,],
 
+)
+for c,v,l,o in zip([blue,red],[(meta['M']==0),(meta['M']==1)],['MMI < 0','MMI > 0'],[.07,.01]):
+    plotkm2(ax,v,c=c,label=l,offset=o)
+#plotkm2(ax,meta.index,) #ls=(0,(4.5,.85)),)
+leg = ax.legend(
+    loc='upper right',
+    bbox_to_anchor=(1.02,.96),
+    ncols=1,
+    borderpad=.5,
+    borderaxespad=.0,
+    handlelength=1.15,
+    fontsize=5,
+    #frameon=True,
+    framealpha=1,
+    edgecolor=(1,1,1,0),
+)
 # drawmedian(ax,)
 
 # %%
-fig.savefig("../plots/forest.pdf", dpi=1000, transparent=True, bbox_inches="tight")
+fig.savefig("../plots/forest.pdf", dpi=1200, transparent=True, )
 # %%
 """
 nat1 = 3.5 1.55

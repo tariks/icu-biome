@@ -8,22 +8,19 @@ abc.border:                 False
 abc.borderwidth:            .5
 abc.color:                  black
 abc.loc:                    left
-abc.size:                   9
+abc.size:                   8
 abc.titlepad:               4.0
 abc.weight:                 bold
 autoformat:                 True
 axes.alpha:                 None
 axes.inbounds:              True
 axes.margin:                0.05
+axes.unicode_minus:          True
 borders:                    False
 borders.alpha:              None
 borders.color:              black
-borders.linewidth:          0.6
+borders.linewidth:          0.5
 borders.zorder:             2.0
-bottomlabel.color:          black
-bottomlabel.rotation:       horizontal
-bottomlabel.size:           7
-bottomlabel.weight:         normal
 cmap:                       Sunrise
 cmap.autodiverging:         True
 cmap.cyclic:                twilight
@@ -31,9 +28,7 @@ cmap.discrete:              None
 cmap.diverging:             Div
 cmap.inbounds:              True
 cmap.levels:                9
-cmap.listedthresh:          64
-cmap.lut:                   256
-cmap.qualitative:           colorblind10
+cmap.qualitative:           colorblind
 cmap.robust:                True
 cmap.sequential:            Sunrise
 colorbar.edgecolor:         white
@@ -53,10 +48,10 @@ colorbar.shadow:            False
 colorbar.width:             0.08
 cycle:                      colorblind
 edgefix:                    True
-font.large:                 7
-font.largesize:             7
-font.small:                 7
-font.smallsize:             7
+font.large:                 5
+font.largesize:             5
+font.small:                 5
+font.smallsize:             5
 formatter.limits:           -5, 6
 formatter.min_exponent:     0
 formatter.offset_threshold: 4
@@ -68,41 +63,29 @@ grid.labels:                False
 grid.labelsize:             medium
 grid.labelweight:           normal
 grid.rotatelabels:          False
-grid.style:                 :
+grid.linestyle:                 (0, (1, 5))
 grid.color:                 505050
 grid.width:                 0.5
 gridminor:                  False
-gridminor.linestyle:        -
 gridminor.linewidth:        0.3
-gridminor.style:            -
-gridminor.width:            0.3
 inlineformat:               retina
 innerborders:               False
 innerborders.alpha:         None
 innerborders.color:         black
-innerborders.linewidth:     0.6
+innerborders.linewidth:     0.5
 innerborders.zorder:        2.0
 label.color:                black
-label.pad:                  3.0
-label.size:                 7
+label.pad:                  2.5
+label.size:                 5
 label.weight:               normal
 leftlabel.color:            black
-leftlabel.pad:              4.0
-leftlabel.rotation:         vertical
-leftlabel.size:             7
-leftlabel.weight:           normal
 margin:                     0.05
 meta.color:                 black
 meta.edgecolor:             black
 meta.linewidth:             0.6
 meta.width:                 0.6
-negcolor:                   blue7
-poscolor:                   red7
-rightlabel.color:           black
-rightlabel.pad:             4.0
-rightlabel.rotation:        vertical
-rightlabel.size:            7
-rightlabel.weight:          normal
+negcolor:                   1770b8
+poscolor:                   B81720
 style:                      None
 subplots.align:             True
 subplots.innerpad:          1.0
@@ -114,15 +97,15 @@ subplots.span:              False
 subplots.tight:             True
 suptitle.color:             black
 suptitle.pad:               5.0
-suptitle.size:              7
+suptitle.size:              5
 suptitle.weight:            bold
 tick.color:                 black
 tick.dir:                   out
 tick.labelcolor:            black
 tick.labelpad:              2.0
-tick.labelsize:             7
+tick.labelsize:             5
 tick.labelweight:           normal
-tick.len:                   2.5
+tick.len:                   2
 tick.lenratio:              0.5
 tick.linewidth:             0.5
 tick.minor:                 True
@@ -137,15 +120,10 @@ title.bboxstyle:            square
 title.border:               False
 title.borderwidth:          1.5
 title.color:                black
-title.loc:                  center
-title.pad:                  5.0
-title.size:                 7
+title.loc:                  left
+title.pad:                  4.0
+title.size:                 5
 title.weight:               normal
-toplabel.color:             black
-toplabel.pad:               4.0
-toplabel.rotation:          horizontal
-toplabel.size:              7
-toplabel.weight:            normal
 
 # Matplotlib settings
 axes.axisbelow:              line
@@ -155,30 +133,24 @@ axes.grid.which:             major
 axes.edgecolor:              black
 axes.labelcolor:             black
 axes.labelpad:               4.0
-axes.labelsize:              7
+axes.labelsize:              5
 axes.labelweight:            normal
 axes.linewidth:              0.6
-axes.titlepad:               5.0
-axes.titlesize:              7
+axes.titlepad:               4.0
 axes.titleweight:            normal
 axes.xmargin:                0.05
 axes.ymargin:                0.05
 errorbar.capsize:            3.0
 figure.autolayout:           False
-figure.figsize:              4, 4
-figure.dpi:                  600
-figure.facecolor:            f4f4f4
-figure.titlesize:            7
 figure.titleweight:          normal
 font.serif:                  TeX Gyre Schola, TeX Gyre Bonum, TeX Gyre Termes, TeX Gyre Pagella, DejaVu Serif, Bitstream Vera Serif, Computer Modern Roman, Bookman, Century Schoolbook L, Charter, ITC Bookman, New Century Schoolbook, Nimbus Roman No9 L, Palatino, Times New Roman, Times, Utopia, serif
 font.sans-serif:             TeX Gyre Heros, DejaVu Sans, Bitstream Vera Sans, Computer Modern Sans Serif, Arial, Avenir, Fira Math, Frutiger, Geneva, Gill Sans, Helvetica, Lucid, Lucida Grande, Myriad Pro, Noto Sans, Roboto, Tahoma, Trebuchet MS, Ubuntu, Univers, Verdana, sans-serif
 font.monospace:              Source Sans Pro, TeX Gyre Cursor, DejaVu Sans Mono, Bitstream Vera Sans Mono, Computer Modern Typewriter, Andale Mono, Courier New, Courier, Fixed, Nimbus Mono L, Terminal, monospace
 font.cursive:                TeX Gyre Chorus, Apple Chancery, Felipa, Sand, Script MT, Textile, Zapf Chancery, cursive
 font.fantasy:                TeX Gyre Adventor, Avant Garde, Charcoal, Chicago, Comic Sans MS, Futura, Humor Sans, Impact, Optima, Western, xkcd, fantasy
-font.family:                 Source Sans Pro
-font.size:                   7.0
+font.family:                 Helvetica
+font.size:                   5
 grid.alpha:                  0.6
-grid.linestyle:              -
 grid.linewidth:              0.5
 hatch.color:                 black
 hatch.linewidth:             0.6
@@ -192,35 +164,10 @@ legend.columnspacing:        1.5
 legend.edgecolor:            black
 legend.facecolor:            white
 legend.fancybox:             False
-legend.fontsize:             7
+legend.fontsize:             5
 legend.framealpha:           0.8
-legend.handletextpad:        0.5
+legend.handletextpad:        0.3
 mathtext.fontset:            custom
 mathtext.default:            regular
 patch.linewidth:             0.6
-savefig.dpi:                 1000
-savefig.facecolor:           white
-savefig.format:              pdf
-savefig.transparent:         True
-xtick.color:                 black
-xtick.direction:             out
-xtick.labelsize:             7
-xtick.major.pad:             2.0
-xtick.major.size:            3.0
-xtick.major.width:           0.5
-xtick.minor.pad:             2.0
-xtick.minor.size:            1.5
-xtick.minor.width:           0.4
-xtick.minor.visible:         True
-ytick.color:                 black
-ytick.direction:             out
-ytick.labelsize:             7
-ytick.major.pad:             2.0
-ytick.major.size:            3.0
-ytick.major.width:           0.5
-ytick.minor.pad:             2.0
-ytick.minor.size:            1.5
-ytick.minor.width:           0.4
-ytick.minor.visible:         True
-axes.titlecolor:             black
-pdf.fonttype :  42 # Output Type 3 (Type3) or Type 42 (TrueType)
+pdf.fonttype :               42

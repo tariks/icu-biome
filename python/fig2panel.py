@@ -10,9 +10,6 @@ import proplot as pplt
 # %%
 pplt.rc.load('../plots/.proplotrc')
 pplt.config_inline_backend('retina')
-pplt.rc.fontfamily = "Arial"
-pplt.rc["text.antialiased"] = True
-pplt.rc["lines.antialiased"] = True
 
 # %%
 array = np.array([
@@ -44,14 +41,19 @@ fig, axs = pplt.subplots(
     gridalpha=0.7,
     gridlinewidth=0.3,
     refaspect=1,
-    figwidth='12.5cm',
+    figwidth='8.4cm',
+    abc_kw={'size': 8},
+    yminorlocator='none',
+    xminorlocator='none',
 )
 
 
 ###### diversity plots
 meta = pd.read_csv("../meta/meta52_current.csv", index_col=0)
-blue = (0.000, 0.267, 0.533, 1.000)
-red = (0.733, 0.333, 0.400, 1.000)
+#blue = (0.000, 0.267, 0.533, 1.000)
+blue = '#0C385C'
+#red = (0.733, 0.333, 0.400, 1.000)
+red = '#94131A'
 div_metrics = [
     # 'ACE (R)',
     "Chao1 (R)",
@@ -83,9 +85,9 @@ def jitter(n, bins=16):
         else:
             counted.append(x[i])
             theseguys = (x == x[i])
-            width = count * 0.1
+            width = count * 0.06
             y[theseguys] += np.arange(-width / 2, width / 2, width / theseguys.sum())
-    y += (np.random.random(y.size) - 0.5) * 0.015
+    y += (np.random.random(y.size) - 0.5) * 0.12
     return y
 
 
@@ -95,40 +97,36 @@ v = "M"
 a = meta.loc[meta[v] == 0]
 b = meta.loc[meta[v] == 1]
 pvals = {
-    i: stats.ranksums(
-        a[i],
-        b[i],
-    )[1]
-    for i in div_metrics
-}
-pvals = {
     i: stats.ttest_ind(a[i], b[i], alternative="two-sided", equal_var=False)[1]
     for i in div_metrics
 }
 divax=axs[:2,:]
 divax.format(
     xminorlocator="none",
-    ylim=(-3,3),
+    ylim=(-3.1,3),
     xticks='none',
     xlabel='',
     ylabel='',
-    ticklen=0,
+    #ticklen=0,
 )
 param = dict(
     fill=False,
     means=False,
     meanc="black",
-    lw=1.1,
+    lw=.75,
     showcaps=False,
     showfliers=False,
     widths=0.75,
+    boxprops=dict(snap=True,solid_joinstyle='bevel',alpha=.8),
+    medianprops=dict(snap=True,solid_joinstyle='bevel',alpha=.8),
 )
 scatterparam = dict(
-    s=15,
-    mec="#ffffff",
-    alpha=0.7,
-    marker="x",
-    lw=0.5,
+    s=7,
+    #mec="#000000",
+    alpha=0.3,
+    marker=".",
+    lw=0.4,
+    snap=False,
 )
 b=[]
 for metric, ax in zip(div_metrics, divax[:-1]):
@@ -190,11 +188,12 @@ ax.spines['left'].set(color=(1,1,1,0))
 #ax.hlines([.6, .4], [0.05, 0.05], [.3, .3], c=[blue, red], lw=2.5,transform=ax.transAxes)
 
 #subax.format(xticklen=0,xlabel='')
-####### pca
+
+# ======================================================== #
+# ======================================================== #
+# ======================================================== #
 
 from skbio.stats.composition import clr
-blue = (0.000, 0.267, 0.533, 1.000)
-red = (0.733, 0.333, 0.400, 1.000)
 def cart2pol(x, y):
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
@@ -227,7 +226,6 @@ x.columns = [i.replace('[','').replace(']','') for i in x.columns]
 # x[:]=multiplicative_replacement(x)
 x = x[s.index.to_list()[:30]]
 x[:] = clr(x)
-# x-=x.mean()
 
 pca = SparsePCA(
     n_components=2,
@@ -249,52 +247,47 @@ L = loadings**2
 L = L.sum(axis=1).sort_values(ascending=False)
 a = meta.loc[meta["month"] == 0].index
 b = meta.loc[meta["month"] == 1].index
-loadings
 subax=axs[-1,:]
 
 
 handles=[]
 
 subax.format(
-    yminorlocator="none",
     ylabel='MMI',
 )
 W = pd.DataFrame(W, index=x.index, columns=loadings.columns)
 l1 = l1.sort_values(ascending=False)
 l2 = l2.sort_values(ascending=False)
 z = np.zeros(W.shape[0])
-cycle=pplt.Cycle('colorblind',ms=10,mew=.5,  )
-colormap='batlow_r'
-cmap=pplt.Colormap(colormap,left=.3,right=.7)
+colormap='tokyo_r'
+cmap=pplt.Colormap(colormap,left=.18,right=.9)
 for ax,pc in zip(subax[:2],['PC1','PC2']):
-#    norm=pplt.Normalize(W[pc])
     for i in [0,1]:
         xw=W[pc].loc[meta['month']==i]
         yw=mbal.loc[meta['month']==i]
         if i==1:
             lab='Death < 28 days'
             m='x'
-            mew=1.2
+            mew=1
             a=1
         else:
             lab='Death > 28 days'
             m='o'
             mew=0
-            a=.6
+            a=.7
 
         print(xw.shape)
         handles.append(ax.scatter(
             xw,
             yw,
-            cycle=cycle,
             c = (xw-W[pc].min())/W[pc].max(),
             cmap=cmap,
-    #        fc=(0,0,0,0),
             marker=m,
             alpha=a,
             mew=mew,
             label=lab,
             snap=True,
+            ms=13,
         ))
         ax.format(xlabel=pc,) #,ylabelpad=-1.2,xlabelpad=5)
 handles=handles[:2]
@@ -309,12 +302,11 @@ for ax,l in zip(subax[:2],[l1,l2],):
     taxa = l.index.to_list()
     taxa = taxa[:4] + taxa[-4:]
     taxa = taxa[::-1]
-    #panel.bar(l.loc[taxa], negpos=True, negcolor=blue, poscolor=red, alpha=0.9, snap=True)
     lo,hi = l.min(),l.max()
     norm=pplt.Normalize()
     c=norm(l.loc[taxa])
     panel.bar(l.loc[taxa], c=cmap(c), snap=True)
-    panel.axhline(0, color="#303030", lw=0.8)
+    panel.axhline(0, color="#303030", lw=0.6)
     limsx=(-.5,7.5)
     limsy=(-.5,.35)
     panel.format(
@@ -325,6 +317,7 @@ for ax,l in zip(subax[:2],[l1,l2],):
         yminorlocator="none",
         xminorlocator="none",
         yticks=[0],
+        ticklen=0,
         grid=False,
         xlim=limsx,
         ylim=limsy,
@@ -350,10 +343,11 @@ for ax in axs[:,-1]:
     )
 '''   
 
-axs[0].format(ltitle='Diversity metrics in MMI subgroups') 
-divax.format(ylabel='Geometric Z-score',yticks=np.arange(-2,3))
-axs[-1,0].format(ltitle='MMI vs community structure components (SSPCA)')
+#axs[0].format(ltitle='Diversity metrics in MMI subgroups') 
+divax.format(ylabel='Geometric Z-score',yticks=np.arange(-2,3),ylim=(-3.2,2.5))
+#axs[-1,0].format(ltitle='MMI vs community structure components (SSPCA)')
 panels[0].format(abc=True)
-axs[-1].legend(handles,loc='fill',ncols=1,frameon=False,borderpad=1)
-fig.savefig('../plots/fig2panel.pdf',dpi=1000,transparent=True)
+leg=axs[-1].legend(handles,loc='fill',ncols=1,frameon=False,borderpad=1)
+for i in leg.get_patches(): i.set(color='#303030')
+fig.savefig('../plots/fig2panel.pdf',dpi=1200,transparent=True)
 # %%
